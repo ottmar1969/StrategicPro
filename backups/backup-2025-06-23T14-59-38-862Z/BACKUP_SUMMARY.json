@@ -1,0 +1,21 @@
+{
+  "timestamp": "2025-06-23T14-59-38-862Z",
+  "version": "02",
+  "components": [
+    "Complete source code",
+    "Project metadata",
+    "Deployment guide",
+    "GitHub setup instructions",
+    "Environment configuration",
+    "Documentation"
+  ],
+  "totalSize": 1,
+  "archiveLocation": "./backups/contentscale-platform-v02.zip",
+  "nextSteps": [
+    "1. Download the archive file",
+    "2. Extract and review deployment guide",
+    "3. Set up GitHub repository",
+    "4. Deploy to Replit or custom hosting",
+    "5. Configure DNS for contentscale.site"
+  ]
+}

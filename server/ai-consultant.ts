@@ -143,59 +143,87 @@ class AIConsultant {
       const categoryExpertise = this.consultingCategories[category as keyof typeof this.consultingCategories] || 'General Business';
       
       const enhancedPrompt = `
-        You are a world-class SEO content writer and ${categoryExpertise} expert. Your task is to create content that achieves a perfect 10/10 RankMath SEO score using the advanced CRAFT framework.
+        You are a world-class SEO content writer and ${categoryExpertise} expert. Your task is to create content that achieves a perfect 10/10 RankMath SEO score using the advanced CRAFT framework and Google's helpful content guidelines.
 
         CRAFT FRAMEWORK IMPLEMENTATION:
-        C - CAPTIVATE: Hook readers instantly with compelling headlines and openings
-        R - RESEARCH: Include data-driven insights, statistics, and authoritative sources
-        A - AUTHORITY: Demonstrate expertise through detailed analysis and industry knowledge
-        F - FLOW: Structure content logically with smooth transitions and scannable format
-        T - TRUST: Build credibility with accurate information and transparent expertise
+        C - CUT THE FLUFF: Eliminate unnecessary words and phrases that don't add value. Focus on delivering information concisely and with clarity. Use short sentences (2.5 words max per sentence).
+        R - REVIEW, EDIT & OPTIMIZE: Review overall structure and flow. Ensure headings and subheadings guide readers effectively. Optimize for SEO by including relevant keywords naturally.
+        A - ADD VISUALS, IMAGES, OR MEDIA: Incorporate suggestions for visuals like images, infographics, or videos to break up text and enhance engagement.
+        F - FACT-CHECK: Verify accuracy of all information. Include researched statistics with outbound links to authoritative sources (government URLs, .edu, .org, official organizations).
+        T - TRUST-BUILD WITH PERSONAL STORY, TONE & LINKS: Maintain consistent, engaging tone. Include links to credible sources. Add personal anecdotes where appropriate.
 
-        GOOGLE AI MODE OPTIMIZATION:
-        - Optimize for Google AI Overview snippets and featured snippets
+        GOOGLE'S HELPFUL CONTENT GUIDELINES:
+        - Create helpful, reliable, people-first content (https://developers.google.com/search/docs/fundamentals/creating-helpful-content)
+        - Focus on user satisfaction and experience
+        - Demonstrate first-hand expertise and depth of knowledge
+        - Avoid content created primarily for search engines
+
+        RANKMATH 100/100 SCORE REQUIREMENTS (https://rankmath.com/kb/score-100-in-tests/):
+        - Focus keyword appears in title, meta description, URL, and first paragraph
+        - Target keyword density: 0.5-2.5% (natural integration)
+        - Title length: 50-60 characters with focus keyword
+        - Meta description: 120-160 characters, compelling and keyword-rich
+        - Proper H1, H2, H3 structure with keywords in headings
+        - Content length: 2000+ words for comprehensive coverage
+        - Include LSI keywords and semantic variations
+        - Add internal linking opportunities (3-5 internal links)
+        - Include 2-3 external links to authoritative sources
+        - Schema markup suggestions for rich snippets
+        - Image alt text optimization
+        - Table of contents for long-form content
+        - Related keywords and entities Google associates with topic
+
+        REQUIRED STATISTICAL RESEARCH:
+        - Always include researched statistics with source citations
+        - Prioritize government sources (.gov), educational institutions (.edu), official organizations (.org)
+        - Avoid competitor websites as sources
+        - Format statistics with proper attribution and links
+        - Use colored quotes for important statistics and data points
+
+        GOOGLE AI OVERVIEW OPTIMIZATION:
         - Structure content to answer specific user queries comprehensively
-        - Include semantic keywords and related terms naturally
+        - Include FAQ sections that address "People Also Ask" questions
         - Format with clear headings, bullet points, and numbered lists
         - Provide direct, actionable answers to user questions
-
-        RANKMATH 10/10 SEO REQUIREMENTS:
-        - Target keyword density: 0.5-2.5% (natural integration)
-        - Include LSI keywords and semantic variations
-        - Meta title: 50-60 characters, include target keyword
-        - Meta description: 150-160 characters, compelling and keyword-rich
-        - Use H1, H2, H3 structure properly with keywords in headings
-        - Include internal and external linking opportunities
-        - Add schema markup suggestions where relevant
-        - Optimize for featured snippets with FAQ sections
-        - Include table of contents for long-form content
-        - Add related keywords and entities Google associates with the topic
+        - Optimize for featured snippets with concise, authoritative answers
+        - Include semantic keywords and related terms naturally
 
         ADVANCED SEO TECHNIQUES:
         - Write for E-A-T (Expertise, Authoritativeness, Trustworthiness)
-        - Include People Also Ask (PAA) questions and answers
         - Optimize for voice search with conversational queries
-        - Add location-specific content where relevant
-        - Include trending and newsworthy angles when applicable
         - Structure for Core Web Vitals optimization
         - Add social proof and credibility indicators
+        - Include trending and newsworthy angles when applicable
+        - Location-specific content where relevant
+
+        WRITING STYLE REQUIREMENTS:
+        - Short sentences (maximum 2.5 words - CRITICAL)
+        - Clear, concise language
+        - Active voice preferred
+        - Scannable format with bullet points and subheadings
+        - Colored quotes for important statistics and key points
+        - Personal tone while maintaining authority
 
         CONTENT REQUEST:
         ${prompt}
         
         ${businessContext ? `Business Context: ${JSON.stringify(businessContext, null, 2)}` : ''}
 
-        DELIVERABLES:
-        1. SEO-optimized article (1500-3000 words)
-        2. Meta title and description
-        3. H1, H2, H3 heading structure with keywords
-        4. FAQ section for Google AI Overview
-        5. Key takeaways summary
-        6. Internal/external linking suggestions
-        7. Schema markup recommendations
-        8. Social media snippets for promotion
+        MANDATORY DELIVERABLES:
+        1. SEO-optimized article (2000-3000 words)
+        2. Meta title (50-60 characters) and meta description (120-160 characters)
+        3. H1, H2, H3 heading structure with focus keyword integration
+        4. FAQ section optimized for Google AI Overview
+        5. Table of contents for navigation
+        6. Key takeaways summary with actionable insights
+        7. 2-3 external links to government/authoritative sources (.gov, .edu, .org)
+        8. 3-5 internal linking suggestions
+        9. Schema markup recommendations
+        10. Image suggestions with optimized alt text
+        11. Social media snippets for promotion
+        12. Researched statistics with proper source attribution
 
-        Create content that ranks #1 on Google and gets featured in AI overviews. Focus on user intent, comprehensive coverage, and technical SEO excellence.
+        Create content that achieves 100/100 RankMath score, ranks #1 on Google, and gets featured in AI overviews. Focus on user intent, comprehensive coverage, and technical SEO excellence following Google's helpful content guidelines.
         
         Please ensure the content is:
         - Professional and actionable

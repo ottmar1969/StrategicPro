@@ -312,41 +312,72 @@ app.get('*', (req, res) => {
 
                             <!-- Main Content Generation Form -->
                             <div class="p-6">
-                                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
-                                    <!-- Main Keyword -->
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Main Keyword*</label>
-                                        <div class="flex">
-                                            <input type="text" id="mainKeyword" class="flex-1 p-3 border border-gray-300 rounded-l-lg" placeholder="Enter your main keyword">
-                                            <button onclick="generateKeyword()" class="bg-purple-600 text-white px-4 rounded-r-lg hover:bg-purple-700 transition-colors">Generate</button>
+                                <!-- Dynamic Keyword Generation System -->
+                                <div class="mb-6">
+                                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                                        <!-- Main Keywords with Dynamic Rows -->
+                                        <div>
+                                            <div class="flex justify-between items-center mb-2">
+                                                <label class="block text-sm font-medium text-gray-700">Main Keyword*</label>
+                                                <button onclick="generateKeywords()" class="bg-purple-600 text-white px-3 py-1 rounded text-sm hover:bg-purple-700 transition-colors">Generate</button>
+                                            </div>
+                                            <div id="keywordRows">
+                                                <div class="keyword-row mb-2">
+                                                    <div class="flex items-center">
+                                                        <span class="text-sm text-gray-500 w-6">1</span>
+                                                        <input type="text" class="flex-1 p-2 border border-gray-300 rounded ml-2" placeholder="Enter seed keyword" data-row="1">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button onclick="addKeywordRow()" class="text-blue-600 text-sm hover:underline">Add row</button>
                                         </div>
-                                        <button onclick="addKeywordRow()" class="text-blue-600 text-sm mt-1 hover:underline">Add row</button>
-                                    </div>
 
-                                    <!-- Title -->
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Title*</label>
-                                        <div class="flex">
-                                            <input type="text" id="contentTitle" class="flex-1 p-3 border border-gray-300 rounded-l-lg" placeholder="Enter your blog title or topic here">
-                                            <button onclick="generateTitle()" class="bg-purple-600 text-white px-4 rounded-r-lg hover:bg-purple-700 transition-colors">Generate</button>
+                                        <!-- Titles with Dynamic Rows -->
+                                        <div>
+                                            <div class="flex justify-between items-center mb-2">
+                                                <label class="block text-sm font-medium text-gray-700">Title*</label>
+                                                <button onclick="generateTitles()" class="bg-purple-600 text-white px-3 py-1 rounded text-sm hover:bg-purple-700 transition-colors">Generate</button>
+                                            </div>
+                                            <div id="titleRows">
+                                                <div class="title-row mb-2">
+                                                    <div class="flex items-center">
+                                                        <span class="text-sm text-gray-500 w-6">1</span>
+                                                        <input type="text" class="flex-1 p-2 border border-gray-300 rounded ml-2" placeholder="Enter your blog title or topic here" data-row="1">
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <!-- Keywords -->
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Keywords</label>
-                                        <div class="flex">
-                                            <input type="text" id="keywords" class="flex-1 p-3 border border-gray-300 rounded-l-lg" placeholder="Enter keywords to include in the text">
-                                            <button onclick="generateNLP()" class="bg-purple-600 text-white px-4 rounded-r-lg hover:bg-purple-700 transition-colors">Generate NLP</button>
+                                        <!-- Keywords NLP with Dynamic Rows -->
+                                        <div>
+                                            <div class="flex justify-between items-center mb-2">
+                                                <label class="block text-sm font-medium text-gray-700">Keywords</label>
+                                                <button onclick="generateNLPKeywords()" class="bg-purple-600 text-white px-3 py-1 rounded text-sm hover:bg-purple-700 transition-colors">Generate NLP</button>
+                                            </div>
+                                            <div id="nlpRows">
+                                                <div class="nlp-row mb-2">
+                                                    <div class="flex items-center">
+                                                        <span class="text-sm text-gray-500 w-6">1</span>
+                                                        <input type="text" class="flex-1 p-2 border border-gray-300 rounded ml-2" placeholder="Keywords will be auto-generated" data-row="1">
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <!-- Outline -->
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Outline</label>
-                                        <div class="flex">
-                                            <input type="text" id="outline" class="flex-1 p-3 border border-gray-300 rounded-l-lg" placeholder="Enter outline to include in the text">
-                                            <button onclick="generateOutline()" class="bg-purple-600 text-white px-4 rounded-r-lg hover:bg-purple-700 transition-colors">Generate</button>
+                                        <!-- Outlines with Dynamic Rows -->
+                                        <div>
+                                            <div class="flex justify-between items-center mb-2">
+                                                <label class="block text-sm font-medium text-gray-700">Outline</label>
+                                                <button onclick="generateOutlines()" class="bg-purple-600 text-white px-3 py-1 rounded text-sm hover:bg-purple-700 transition-colors">Generate</button>
+                                            </div>
+                                            <div id="outlineRows">
+                                                <div class="outline-row mb-2">
+                                                    <div class="flex items-center">
+                                                        <span class="text-sm text-gray-500 w-6">1</span>
+                                                        <input type="text" class="flex-1 p-2 border border-gray-300 rounded ml-2" placeholder="Outline will be auto-generated" data-row="1">
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -359,16 +390,35 @@ app.get('*', (req, res) => {
                                     </div>
                                     
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                        <!-- Language -->
+                                        <!-- Language (25 Languages) -->
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-2">Language</label>
                                             <select class="w-full p-3 border border-gray-300 rounded-lg">
                                                 <option>🇺🇸 English (US)</option>
                                                 <option>🇬🇧 English (UK)</option>
-                                                <option>🇪🇸 Spanish</option>
+                                                <option>🇪🇸 Spanish (Spain)</option>
+                                                <option>🇲🇽 Spanish (Mexico)</option>
                                                 <option>🇫🇷 French</option>
                                                 <option>🇩🇪 German</option>
+                                                <option>🇮🇹 Italian</option>
+                                                <option>🇵🇹 Portuguese</option>
+                                                <option>🇧🇷 Portuguese (Brazil)</option>
                                                 <option>🇳🇱 Dutch</option>
+                                                <option>🇷🇺 Russian</option>
+                                                <option>🇯🇵 Japanese</option>
+                                                <option>🇰🇷 Korean</option>
+                                                <option>🇨🇳 Chinese (Simplified)</option>
+                                                <option>🇹🇼 Chinese (Traditional)</option>
+                                                <option>🇦🇷 Arabic</option>
+                                                <option>🇮🇳 Hindi</option>
+                                                <option>🇹🇷 Turkish</option>
+                                                <option>🇵🇱 Polish</option>
+                                                <option>🇸🇪 Swedish</option>
+                                                <option>🇳🇴 Norwegian</option>
+                                                <option>🇩🇰 Danish</option>
+                                                <option>🇫🇮 Finnish</option>
+                                                <option>🇬🇷 Greek</option>
+                                                <option>🇹🇭 Thai</option>
                                             </select>
                                         </div>
 
@@ -388,12 +438,12 @@ app.get('*', (req, res) => {
 
                                         <!-- Article Size -->
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-2">Article size <span class="text-gray-500">2400-3600 words, 9-12 H2</span></label>
-                                            <select class="w-full p-3 border border-gray-300 rounded-lg">
-                                                <option>Medium</option>
-                                                <option>Short (800-1200 words)</option>
-                                                <option>Long (4000-6000 words)</option>
-                                                <option>Extra Long (6000+ words)</option>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Article size</label>
+                                            <select class="w-full p-3 border border-gray-300 rounded-lg" id="articleSize">
+                                                <option value="x-small" class="text-red-500">X-Small (500-1000 words)</option>
+                                                <option value="small" class="text-green-500">Small (1000-2500 words)</option>
+                                                <option value="medium" class="text-blue-500" selected>Medium (2400-3600 words, 9-12 H2)</option>
+                                                <option value="large" class="text-orange-500">Large (3600-5200 words, 13-16 H2)</option>
                                             </select>
                                         </div>
                                     </div>
@@ -420,21 +470,41 @@ app.get('*', (req, res) => {
                                                 <label class="block text-sm font-medium text-gray-700 mb-2">Point of view</label>
                                                 <select class="w-full p-3 border border-gray-300 rounded-lg">
                                                     <option>None</option>
-                                                    <option>First Person (I, We)</option>
-                                                    <option>Second Person (You)</option>
-                                                    <option>Third Person (He, She, They)</option>
+                                                    <option>First person singular (I, me, my, mine)</option>
+                                                    <option>First person plural (we, us, our, ours)</option>
+                                                    <option>Second person (you, your, yours)</option>
+                                                    <option>Third person (he, she, it, they)</option>
                                                 </select>
                                             </div>
                                             
                                             <div>
                                                 <label class="block text-sm font-medium text-gray-700 mb-2">Target country</label>
                                                 <select class="w-full p-3 border border-gray-300 rounded-lg">
-                                                    <option>United States</option>
-                                                    <option>United Kingdom</option>
-                                                    <option>Canada</option>
-                                                    <option>Australia</option>
-                                                    <option>Netherlands</option>
-                                                    <option>Germany</option>
+                                                    <option>🇺🇸 United States</option>
+                                                    <option>🇬🇧 United Kingdom</option>
+                                                    <option>🇨🇦 Canada</option>
+                                                    <option>🇦🇺 Australia</option>
+                                                    <option>🇩🇪 Germany</option>
+                                                    <option>🇫🇷 France</option>
+                                                    <option>🇮🇹 Italy</option>
+                                                    <option>🇪🇸 Spain</option>
+                                                    <option>🇳🇱 Netherlands</option>
+                                                    <option>🇧🇷 Brazil</option>
+                                                    <option>🇯🇵 Japan</option>
+                                                    <option>🇮🇳 India</option>
+                                                    <option>🇨🇳 China</option>
+                                                    <option>🇷🇺 Russia</option>
+                                                    <option>🇲🇽 Mexico</option>
+                                                    <option>🇰🇷 South Korea</option>
+                                                    <option>🇸🇬 Singapore</option>
+                                                    <option>🇿🇦 South Africa</option>
+                                                    <option>🇳🇴 Norway</option>
+                                                    <option>🇸🇪 Sweden</option>
+                                                    <option>🇩🇰 Denmark</option>
+                                                    <option>🇫🇮 Finland</option>
+                                                    <option>🇨🇭 Switzerland</option>
+                                                    <option>🇦🇹 Austria</option>
+                                                    <option>🇳🇿 New Zealand</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -464,10 +534,11 @@ app.get('*', (req, res) => {
                                                 <label class="block text-sm font-medium text-gray-700 mb-2">Text Readability</label>
                                                 <select class="w-full p-3 border border-gray-300 rounded-lg">
                                                     <option>None</option>
-                                                    <option>Elementary School</option>
-                                                    <option>Middle School</option>
-                                                    <option>High School</option>
-                                                    <option>College Level</option>
+                                                    <option>5th grade, easily understood by 11-year-olds</option>
+                                                    <option>6th grade, easy to read. Conversational language</option>
+                                                    <option>7th grade, fairly easy to read</option>
+                                                    <option>8th & 9th grade, easily understood <span class="text-blue-600">Recommended</span></option>
+                                                    <option>10th to 12th grade, fairly difficult to read</option>
                                                 </select>
                                             </div>
                                             
@@ -1250,39 +1321,211 @@ app.get('*', (req, res) => {
             alert('Template saved successfully! Your configuration has been stored for future use.');
         }
         
-        function generateKeyword() {
-            const input = document.getElementById('mainKeyword');
-            if (input.value.trim()) {
-                alert('Keyword suggestions generated! Premium feature available with credits.');
-            } else {
-                alert('Please enter a main keyword first.');
+        let currentKeywordRows = 1;
+        let currentTitleRows = 1;
+        let currentNLPRows = 1;
+        let currentOutlineRows = 1;
+
+        function generateKeywords() {
+            const keywordInputs = document.querySelectorAll('#keywordRows input');
+            const seedKeywords = [];
+            
+            // Collect all filled seed keywords
+            keywordInputs.forEach(input => {
+                if (input.value.trim()) {
+                    seedKeywords.push(input.value.trim());
+                }
+            });
+            
+            if (seedKeywords.length === 0) {
+                alert('Please enter at least one seed keyword first.');
+                return;
             }
+            
+            // Generate 10 variations for each seed keyword
+            seedKeywords.forEach((seedKeyword, index) => {
+                const variations = generateKeywordVariations(seedKeyword);
+                
+                // If this is the first seed, fill existing rows
+                if (index === 0) {
+                    const inputs = document.querySelectorAll('#keywordRows input');
+                    variations.forEach((variation, varIndex) => {
+                        if (varIndex < inputs.length) {
+                            inputs[varIndex].value = variation;
+                        } else {
+                            addNewKeywordRow(variation);
+                        }
+                    });
+                } else {
+                    // For additional seeds, add new rows
+                    variations.forEach(variation => {
+                        addNewKeywordRow(variation);
+                    });
+                }
+            });
+            
+            // Sync other columns
+            syncRowCounts();
         }
         
-        function generateTitle() {
-            const input = document.getElementById('contentTitle');
-            if (input.value.trim()) {
-                alert('Title variations generated! Premium feature available with credits.');
-            } else {
-                alert('Please enter a title first.');
-            }
+        function generateKeywordVariations(seed) {
+            // AI-powered keyword expansion simulation
+            const variations = [
+                seed,
+                seed + ' benefits',
+                seed + ' guide',
+                'best ' + seed,
+                seed + ' tips',
+                'how to ' + seed,
+                seed + ' reviews',
+                seed + ' comparison',
+                seed + ' for beginners',
+                seed + ' advanced'
+            ];
+            return variations;
         }
         
-        function generateNLP() {
-            alert('NLP keyword suggestions generated! This feature requires credits.');
+        function generateTitles() {
+            const keywordInputs = document.querySelectorAll('#keywordRows input');
+            const titleInputs = document.querySelectorAll('#titleRows input');
+            
+            keywordInputs.forEach((keywordInput, index) => {
+                if (keywordInput.value.trim() && titleInputs[index]) {
+                    const keyword = keywordInput.value.trim();
+                    const generatedTitle = generateTitleFromKeyword(keyword);
+                    titleInputs[index].value = generatedTitle;
+                }
+            });
         }
         
-        function generateOutline() {
-            const input = document.getElementById('outline');
-            if (input.value.trim()) {
-                alert('Outline generated successfully! Premium feature with AI analysis.');
-            } else {
-                alert('Please enter an outline topic first.');
-            }
+        function generateTitleFromKeyword(keyword) {
+            const titleTemplates = [
+                \`The Ultimate Guide to \${keyword.charAt(0).toUpperCase() + keyword.slice(1)}\`,
+                \`\${keyword.charAt(0).toUpperCase() + keyword.slice(1)}: Everything You Need to Know\`,
+                \`How to Master \${keyword.charAt(0).toUpperCase() + keyword.slice(1)} in 2024\`,
+                \`Top 10 \${keyword.charAt(0).toUpperCase() + keyword.slice(1)} Tips for Beginners\`,
+                \`\${keyword.charAt(0).toUpperCase() + keyword.slice(1)} Explained: A Complete Guide\`
+            ];
+            return titleTemplates[Math.floor(Math.random() * titleTemplates.length)];
+        }
+        
+        function generateNLPKeywords() {
+            const keywordInputs = document.querySelectorAll('#keywordRows input');
+            const nlpInputs = document.querySelectorAll('#nlpRows input');
+            
+            keywordInputs.forEach((keywordInput, index) => {
+                if (keywordInput.value.trim() && nlpInputs[index]) {
+                    const keyword = keywordInput.value.trim();
+                    const nlpKeywords = generateNLPFromKeyword(keyword);
+                    nlpInputs[index].value = nlpKeywords;
+                }
+            });
+        }
+        
+        function generateNLPFromKeyword(keyword) {
+            // Simulate AI-powered NLP keyword research
+            const nlpVariations = [
+                keyword + ' semantic keywords',
+                keyword + ' LSI terms',
+                keyword + ' related phrases',
+                keyword + ' synonyms',
+                keyword + ' variations'
+            ];
+            return nlpVariations.slice(0, 3).join(', ');
+        }
+        
+        function generateOutlines() {
+            const keywordInputs = document.querySelectorAll('#keywordRows input');
+            const outlineInputs = document.querySelectorAll('#outlineRows input');
+            
+            keywordInputs.forEach((keywordInput, index) => {
+                if (keywordInput.value.trim() && outlineInputs[index]) {
+                    const keyword = keywordInput.value.trim();
+                    const generatedOutline = generateOutlineFromKeyword(keyword);
+                    outlineInputs[index].value = generatedOutline;
+                }
+            });
+        }
+        
+        function generateOutlineFromKeyword(keyword) {
+            return \`Introduction to \${keyword}, Benefits of \${keyword}, How to use \${keyword}, Best practices, Conclusion\`;
+        }
+        
+        function addNewKeywordRow(value = '') {
+            currentKeywordRows++;
+            const keywordRows = document.getElementById('keywordRows');
+            const newRow = document.createElement('div');
+            newRow.className = 'keyword-row mb-2';
+            newRow.innerHTML = \`
+                <div class="flex items-center">
+                    <span class="text-sm text-gray-500 w-6">\${currentKeywordRows}</span>
+                    <input type="text" class="flex-1 p-2 border border-gray-300 rounded ml-2" placeholder="Generated keyword" data-row="\${currentKeywordRows}" value="\${value}">
+                </div>
+            \`;
+            keywordRows.appendChild(newRow);
         }
         
         function addKeywordRow() {
-            alert('Additional keyword rows added! Pro feature for managing multiple keywords.');
+            addNewKeywordRow();
+            syncRowCounts();
+        }
+        
+        function syncRowCounts() {
+            // Ensure all columns have the same number of rows
+            const maxRows = Math.max(currentKeywordRows, currentTitleRows, currentNLPRows, currentOutlineRows);
+            
+            // Add missing rows to each column
+            while (currentTitleRows < maxRows) {
+                addTitleRow();
+            }
+            while (currentNLPRows < maxRows) {
+                addNLPRow();
+            }
+            while (currentOutlineRows < maxRows) {
+                addOutlineRow();
+            }
+        }
+        
+        function addTitleRow() {
+            currentTitleRows++;
+            const titleRows = document.getElementById('titleRows');
+            const newRow = document.createElement('div');
+            newRow.className = 'title-row mb-2';
+            newRow.innerHTML = \`
+                <div class="flex items-center">
+                    <span class="text-sm text-gray-500 w-6">\${currentTitleRows}</span>
+                    <input type="text" class="flex-1 p-2 border border-gray-300 rounded ml-2" placeholder="Title will be auto-generated" data-row="\${currentTitleRows}">
+                </div>
+            \`;
+            titleRows.appendChild(newRow);
+        }
+        
+        function addNLPRow() {
+            currentNLPRows++;
+            const nlpRows = document.getElementById('nlpRows');
+            const newRow = document.createElement('div');
+            newRow.className = 'nlp-row mb-2';
+            newRow.innerHTML = \`
+                <div class="flex items-center">
+                    <span class="text-sm text-gray-500 w-6">\${currentNLPRows}</span>
+                    <input type="text" class="flex-1 p-2 border border-gray-300 rounded ml-2" placeholder="NLP keywords will be auto-generated" data-row="\${currentNLPRows}">
+                </div>
+            \`;
+            nlpRows.appendChild(newRow);
+        }
+        
+        function addOutlineRow() {
+            currentOutlineRows++;
+            const outlineRows = document.getElementById('outlineRows');
+            const newRow = document.createElement('div');
+            newRow.className = 'outline-row mb-2';
+            newRow.innerHTML = \`
+                <div class="flex items-center">
+                    <span class="text-sm text-gray-500 w-6">\${currentOutlineRows}</span>
+                    <input type="text" class="flex-1 p-2 border border-gray-300 rounded ml-2" placeholder="Outline will be auto-generated" data-row="\${currentOutlineRows}">
+                </div>
+            \`;
+            outlineRows.appendChild(newRow);
         }
         
         function selectHook(type) {
@@ -1300,15 +1543,37 @@ app.get('*', (req, res) => {
         }
         
         function generateArticle() {
-            const mainKeyword = document.getElementById('mainKeyword')?.value;
-            const title = document.getElementById('contentTitle')?.value;
+            // Validate required fields
+            const keywordInputs = document.querySelectorAll('#keywordRows input');
+            const titleInputs = document.querySelectorAll('#titleRows input');
             
-            if (!mainKeyword || !title) {
-                alert('Please fill in the main keyword and title fields before generating.');
+            let hasKeyword = false;
+            let hasTitle = false;
+            
+            keywordInputs.forEach(input => {
+                if (input.value.trim()) hasKeyword = true;
+            });
+            
+            titleInputs.forEach(input => {
+                if (input.value.trim()) hasTitle = true;
+            });
+            
+            if (!hasKeyword || !hasTitle) {
+                alert('Please fill in at least one main keyword and title before generating articles.');
                 return;
             }
             
-            // Show pricing modal if no subscription
+            // Count articles to generate
+            let articleCount = 0;
+            titleInputs.forEach(input => {
+                if (input.value.trim()) articleCount++;
+            });
+            
+            if (articleCount > 1) {
+                alert(\`Ready to generate \${articleCount} articles with advanced CRAFT framework and 100/100 RankMath optimization!\`);
+            }
+            
+            // Show pricing modal
             showPricingModal();
         }
         

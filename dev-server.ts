@@ -1,6 +1,9 @@
 import express from "express";
+import cors from "cors";
 import { createServer as createViteServer } from "vite";
 import routes from "./server/routes.js";
+import agentRoutes from "./server/agent-api.js";
+import { corsOptions, securityHeaders, sanitizeInput, agentAuth, createRateLimit } from "./server/security.js";
 
 async function startServer() {
   const app = express();
@@ -19,11 +22,22 @@ async function startServer() {
     },
   });
   
+  // Security middleware
+  app.use(cors(corsOptions));
+  app.use(securityHeaders);
+  app.use(sanitizeInput);
+  app.use(agentAuth);
+  
+  // Rate limiting
+  app.use('/api/', createRateLimit(15 * 60 * 1000, 100)); // 100 requests per 15 minutes
+  app.use('/api/agent/', createRateLimit(5 * 60 * 1000, 50)); // 50 requests per 5 minutes for agents
+  
   app.use(express.json());
   app.use(vite.ssrFixStacktrace);
   
-  // API routes first
+  // API routes
   app.use(routes);
+  app.use(agentRoutes);
   
   // Vite middleware handles the frontend
   app.use(vite.middlewares);

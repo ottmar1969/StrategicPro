@@ -1,0 +1,31 @@
+{
+  "name": "ContentScale Consulting AI App 1",
+  "description": "Professional AI-powered business consulting platform with agent integration",
+  "version": "1.0.0",
+  "author": "ContentScale",
+  "contact": "consultant@contentscale.site",
+  "features": [
+    "12 consulting categories (SEO, Strategy, Finance, Marketing, Operations, HR, IT, Legal, Sales, CX, Sustainability, Cybersecurity)",
+    "Google Gemini AI integration",
+    "Agent automation APIs",
+    "Batch processing capabilities",
+    "Security & rate limiting",
+    "Downloadable reports",
+    "Business profile management"
+  ],
+  "agent_endpoints": {
+    "status": "/api/agent/status",
+    "batch_process": "/api/agent/batch-consultations",
+    "export": "/api/agent/export-data",
+    "quick_analysis": "/api/agent/quick-analysis",
+    "health": "/api/agent/health"
+  },
+  "deployment": {
+    "runtime": "Node.js 20+",
+    "dependencies": "All included in package.json",
+    "startup": "tsx dev-server.ts",
+    "port": 5173
+  },
+  "backup_created": true,
+  "agent_ready": true
+}

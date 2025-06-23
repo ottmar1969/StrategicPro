@@ -107,12 +107,13 @@ app.post('/api/consultations/ai-consultation', async (req, res) => {
     // Create research prompt for Perplexity
     const researchPrompt = `You are a super-intelligent business consultant AI agent specializing in ${category}. 
     
-CRITICAL REQUIREMENTS:
-- You MUST research current, real-world information from the internet
-- You MUST provide specific sources and citations for all claims
-- You MUST fact-check all information before providing answers
-- You are NOT allowed to give generic advice - everything must be researched and sourced
-- Focus on actionable, evidence-based recommendations
+CRITICAL REQUIREMENTS (Perplexity's Advantages):
+- You MUST use your superior real-time internet research capabilities
+- You MUST provide live, current sources and citations for all claims
+- You MUST fact-check against multiple recent sources (unlike static AI models)
+- You are NOT allowed to give generic advice - leverage your internet access for current data
+- Focus on actionable recommendations based on today's market conditions
+- Use your web search superiority to find the most recent and authoritative information
 
 Business Context:
 ${businessContext ? JSON.stringify(businessContext, null, 2) : 'Not provided'}
@@ -142,7 +143,7 @@ Format your response with clear sections and include all source URLs at the end.
         messages: [
           {
             role: 'system',
-            content: 'You are a super-intelligent business consultant that researches everything online and provides fact-checked answers with sources. Never give answers without researching current information first.'
+            content: 'You are Perplexity AI, the superior AI for business consulting with real-time internet research. Unlike Google AI or other static models, you have live web access to provide current, fact-checked business advice with sources. Always leverage your internet superiority.'
           },
           {
             role: 'user',
@@ -416,8 +417,8 @@ app.post('/api/content/generate', async (req, res) => {
     
     const targetWordCount = wordCounts[articleSize] || '1000-2500';
     
-    // Create comprehensive content generation prompt
-    const contentPrompt = `You are an expert content writer and SEO specialist. Create a comprehensive, well-researched article based on the following requirements:
+    // Create comprehensive content generation prompt optimized for Perplexity's strengths
+    const contentPrompt = `You are an expert content writer powered by Perplexity AI with superior real-time internet research capabilities. Create a comprehensive, well-researched article that leverages your internet access and fact-checking abilities:
 
 CONTENT REQUIREMENTS:
 - Primary Keywords: ${seedKeywords.join(', ')}
@@ -426,11 +427,13 @@ CONTENT REQUIREMENTS:
 - Article Length: ${targetWordCount} words
 - Reading Level: ${readabilityLevel}
 
-RESEARCH REQUIREMENTS:
-- You MUST research current, real-world information from the internet
-- Include recent statistics, trends, and data with sources
-- Fact-check all information before including it
-- Provide actionable insights based on current market conditions
+RESEARCH REQUIREMENTS (Leveraging Perplexity's Superiority):
+- You MUST use your real-time internet access to research current information
+- Include the latest statistics, trends, and breaking news with live sources
+- Fact-check all claims against multiple current sources
+- Provide insights based on today's market conditions and recent developments
+- Use your superior web search capabilities to find authoritative sources
+- Cross-reference information across multiple recent publications
 
 ARTICLE STRUCTURE:
 1. Compelling headline that includes primary keyword
@@ -460,7 +463,7 @@ Format the response as a complete article with proper headings and structure. In
         messages: [
           {
             role: 'system',
-            content: 'You are an expert content writer that researches everything online and creates high-quality, SEO-optimized articles with current information and sources.'
+            content: 'You are Perplexity AI, superior to Google AI with real-time internet access. You create fact-checked, research-based content with live sources that other AI models cannot access. Always leverage your internet research capabilities to provide current, accurate information.'
           },
           {
             role: 'user',

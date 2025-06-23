@@ -22,7 +22,8 @@ const ContentGenerationSchema = z.object({
   wordCount: z.number().min(100).max(5000),
   language: z.string().min(2, "Language is required"),
   tone: z.enum(["professional", "casual", "friendly", "authoritative", "conversational"]),
-  contentType: z.enum(["blog", "article", "social", "email", "product", "landing"])
+  contentType: z.enum(["blog", "article", "social", "email", "product", "landing"]),
+  aiModel: z.enum(["default", "gpt-4", "claude", "gemini-pro"]).optional()
 });
 
 type ContentFormData = z.infer<typeof ContentGenerationSchema>;
@@ -33,11 +34,44 @@ const CREDIT_PACKAGES = [
   { id: "professional", name: "Professional Pack", credits: 25, price: 75, pricePerCredit: 3.00, popular: false, savings: 40 }
 ];
 
+const AI_MODELS = [
+  {
+    id: "default",
+    name: "Default",
+    description: "Best overall performance for most content types",
+    credits: 1,
+    features: ["Fast generation", "SEO optimized", "Multi-language support"]
+  },
+  {
+    id: "gpt-4",
+    name: "GPT-4",
+    description: "Advanced reasoning and creative writing capabilities",
+    credits: 2,
+    features: ["Superior creativity", "Complex analysis", "Technical accuracy"]
+  },
+  {
+    id: "claude",
+    name: "Claude",
+    description: "Excellent for analytical and research-heavy content",
+    credits: 2,
+    features: ["Research synthesis", "Detailed analysis", "Professional tone"]
+  },
+  {
+    id: "gemini-pro",
+    name: "Gemini Pro",
+    description: "Google's most capable model for content generation",
+    credits: 1,
+    features: ["Real-time data", "Multimodal input", "Fast processing"]
+  }
+];
+
 export default function ContentWriter() {
   const [user, setUser] = useState({ credits: 0, freeArticlesUsed: 0, hasOwnApiKey: false });
   const [generatedContent, setGeneratedContent] = useState<any>(null);
   const [showApiKeyForm, setShowApiKeyForm] = useState(false);
+  const [showApiKeyInfo, setShowApiKeyInfo] = useState(false);
   const [apiKeys, setApiKeys] = useState({ openai: "", gemini: "" });
+  const [selectedModel, setSelectedModel] = useState("default");
   const { toast } = useToast();
 
   const form = useForm<ContentFormData>({
@@ -50,7 +84,8 @@ export default function ContentWriter() {
       wordCount: 1000,
       language: "English",
       tone: "professional",
-      contentType: "blog"
+      contentType: "blog",
+      aiModel: "default"
     }
   });
 
@@ -255,6 +290,112 @@ export default function ContentWriter() {
                       )}
                     />
 
+                    {/* AI Model Selection */}
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h4 className="text-lg font-semibold text-gray-900 mb-4">AI SETTINGS</h4>
+                      <FormField
+                        control={form.control}
+                        name="aiModel"
+                        render={({ field }) => (
+                          <FormItem>
+                            <div className="flex items-center justify-between mb-2">
+                              <div>
+                                <FormLabel className="flex items-center gap-2">
+                                  🤖 AI Model
+                                </FormLabel>
+                                <button
+                                  type="button"
+                                  onClick={() => setShowApiKeyInfo(!showApiKeyInfo)}
+                                  className="text-blue-600 text-sm hover:underline"
+                                >
+                                  What is Real-Time SEO?
+                                </button>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-purple-600 font-medium">
+                                  ⚡ {AI_MODELS.find(m => m.id === selectedModel)?.credits || 1} credit
+                                </span>
+                              </div>
+                            </div>
+                            <Select onValueChange={(value) => {
+                              field.onChange(value);
+                              setSelectedModel(value);
+                            }} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="bg-white">
+                                  <SelectValue />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {AI_MODELS.map((model) => (
+                                  <SelectItem key={model.id} value={model.id}>
+                                    <div className="flex items-center justify-between w-full">
+                                      <span>{model.name}</span>
+                                      <span className="text-xs text-gray-500 ml-2">
+                                        {model.credits} credit{model.credits > 1 ? 's' : ''}
+                                      </span>
+                                    </div>
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                            
+                            {/* Model Description */}
+                            {selectedModel && (
+                              <div className="mt-2 p-3 bg-blue-50 rounded-lg">
+                                <p className="text-sm font-medium text-blue-900 mb-1">
+                                  {AI_MODELS.find(m => m.id === selectedModel)?.name}
+                                </p>
+                                <p className="text-sm text-blue-700 mb-2">
+                                  {AI_MODELS.find(m => m.id === selectedModel)?.description}
+                                </p>
+                                <div className="flex flex-wrap gap-1">
+                                  {AI_MODELS.find(m => m.id === selectedModel)?.features.map((feature, idx) => (
+                                    <Badge key={idx} variant="secondary" className="text-xs">
+                                      {feature}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* AI Model Info Popup */}
+                      {showApiKeyInfo && (
+                        <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                          <h5 className="font-semibold text-yellow-800 mb-2">Real-Time SEO</h5>
+                          <p className="text-sm text-yellow-700 mb-3">
+                            Our AI models use real-time data and advanced algorithms to optimize your content for search engines. 
+                            Each model has different strengths for various content types and industries.
+                          </p>
+                          <div className="space-y-2">
+                            <p className="text-sm text-yellow-700">
+                              <strong>Default:</strong> Best for general content with balanced SEO optimization
+                            </p>
+                            <p className="text-sm text-yellow-700">
+                              <strong>GPT-4:</strong> Superior for creative and technical content requiring complex reasoning
+                            </p>
+                            <p className="text-sm text-yellow-700">
+                              <strong>Claude:</strong> Excellent for research-heavy and analytical content
+                            </p>
+                            <p className="text-sm text-yellow-700">
+                              <strong>Gemini Pro:</strong> Google's model with real-time data access and multimodal capabilities
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setShowApiKeyInfo(false)}
+                            className="mt-2 text-yellow-600 hover:text-yellow-800 text-sm font-medium"
+                          >
+                            Close
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
                         control={form.control}
@@ -400,14 +541,29 @@ export default function ContentWriter() {
                     
                     {showApiKeyForm && (
                       <div className="space-y-3 border-t pt-4">
+                        <div className="bg-blue-50 p-3 rounded-lg mb-3">
+                          <h5 className="font-semibold text-blue-800 mb-2">Get Your API Keys</h5>
+                          <div className="space-y-2 text-sm text-blue-700">
+                            <p><strong>OpenAI API Key:</strong></p>
+                            <p>1. Go to platform.openai.com/api-keys</p>
+                            <p>2. Create new secret key</p>
+                            <p>3. Copy key (starts with sk-)</p>
+                            
+                            <p className="mt-3"><strong>Google Gemini API Key:</strong></p>
+                            <p>1. Go to makersuite.google.com/app/apikey</p>
+                            <p>2. Create API key</p>
+                            <p>3. Copy key</p>
+                          </div>
+                        </div>
+                        
                         <Input
-                          placeholder="OpenAI API Key (optional)"
+                          placeholder="OpenAI API Key (sk-...)"
                           type="password"
                           value={apiKeys.openai}
                           onChange={(e) => setApiKeys(prev => ({ ...prev, openai: e.target.value }))}
                         />
                         <Input
-                          placeholder="Google Gemini API Key (optional)"
+                          placeholder="Google Gemini API Key"
                           type="password"
                           value={apiKeys.gemini}
                           onChange={(e) => setApiKeys(prev => ({ ...prev, gemini: e.target.value }))}
@@ -420,6 +576,9 @@ export default function ContentWriter() {
                         >
                           Save Keys
                         </Button>
+                        <p className="text-xs text-gray-500 text-center">
+                          Your keys are encrypted and stored securely
+                        </p>
                       </div>
                     )}
                   </div>

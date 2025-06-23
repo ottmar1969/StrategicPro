@@ -369,6 +369,169 @@ app.delete('/api/consultations/:id', (req, res) => {
   }
 });
 
+// Content generation with Perplexity API
+app.post('/api/content/generate', async (req, res) => {
+  try {
+    const { seedKeywords, language, country, articleSize, readabilityLevel, apiMode, userApiKey } = req.body;
+    
+    // Determine which API key to use
+    let apiKey;
+    let cost;
+    
+    if (apiMode === 'own') {
+      if (!userApiKey) {
+        return res.status(400).json({
+          success: false,
+          error: 'User API key is required when using own API mode.'
+        });
+      }
+      apiKey = userApiKey;
+      cost = '$1.00';
+    } else {
+      if (!process.env.PERPLEXITY_API_KEY) {
+        return res.status(500).json({
+          success: false,
+          error: 'Platform API not configured. Please contact support or use your own API key.'
+        });
+      }
+      apiKey = process.env.PERPLEXITY_API_KEY;
+      cost = '$10.00';
+    }
+    
+    // Determine word count based on article size
+    const wordCounts = {
+      'short': '500-1000',
+      'medium': '1000-2500', 
+      'long': '2500-5000'
+    };
+    
+    const targetWordCount = wordCounts[articleSize] || '1000-2500';
+    
+    // Create comprehensive content generation prompt
+    const contentPrompt = `You are an expert content writer and SEO specialist. Create a comprehensive, well-researched article based on the following requirements:
+
+CONTENT REQUIREMENTS:
+- Primary Keywords: ${seedKeywords.join(', ')}
+- Target Language: ${language}
+- Target Country/Region: ${country}
+- Article Length: ${targetWordCount} words
+- Reading Level: ${readabilityLevel}
+
+RESEARCH REQUIREMENTS:
+- You MUST research current, real-world information from the internet
+- Include recent statistics, trends, and data with sources
+- Fact-check all information before including it
+- Provide actionable insights based on current market conditions
+
+ARTICLE STRUCTURE:
+1. Compelling headline that includes primary keyword
+2. Introduction that hooks the reader
+3. Well-organized sections with subheadings
+4. Current data and statistics with sources
+5. Practical tips and actionable advice
+6. Conclusion with key takeaways
+
+SEO OPTIMIZATION:
+- Natural keyword integration throughout the content
+- Use variations and related keywords
+- Optimize for search intent and user value
+- Include meta description suggestions
+
+Format the response as a complete article with proper headings and structure. Include all source URLs at the end.`;
+
+    // Call Perplexity API for content generation
+    const response = await fetch('https://api.perplexity.ai/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'llama-3.1-sonar-large-128k-online',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are an expert content writer that researches everything online and creates high-quality, SEO-optimized articles with current information and sources.'
+          },
+          {
+            role: 'user',
+            content: contentPrompt
+          }
+        ],
+        max_tokens: 4000,
+        temperature: 0.3,
+        top_p: 0.9,
+        return_related_questions: false,
+        search_recency_filter: 'month',
+        stream: false
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Perplexity API error: ${response.status}`);
+    }
+    
+    const aiResponse = await response.json();
+    const generatedContent = aiResponse.choices[0].message.content;
+    
+    // Extract title from content (first line typically)
+    const lines = generatedContent.split('\n');
+    const title = lines.find(line => line.trim().length > 0 && !line.startsWith('#')) || 'Generated Article';
+    
+    // Estimate word count
+    const wordCount = generatedContent.split(/\s+/).filter(word => word.length > 0).length;
+    
+    // Calculate SEO score (simplified)
+    let seoScore = 70; // Base score
+    seedKeywords.forEach(keyword => {
+      if (generatedContent.toLowerCase().includes(keyword.toLowerCase())) {
+        seoScore += 5;
+      }
+    });
+    seoScore = Math.min(seoScore, 100);
+    
+    // Store content record
+    const contentRecord = {
+      id: `content_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      title: title.replace(/^#+\s*/, ''), // Remove markdown headers
+      content: generatedContent,
+      keywords: seedKeywords,
+      language: language,
+      country: country,
+      wordCount: wordCount,
+      seoScore: seoScore,
+      sources: aiResponse.citations || [],
+      cost: cost,
+      apiMode: apiMode,
+      createdAt: new Date().toISOString()
+    };
+    
+    consultationStorage.set(contentRecord.id, contentRecord);
+    
+    console.log('CONTENT GENERATED:');
+    console.log('==================');
+    console.log('ID:', contentRecord.id);
+    console.log('Title:', contentRecord.title);
+    console.log('Word Count:', contentRecord.wordCount);
+    console.log('SEO Score:', contentRecord.seoScore);
+    console.log('Cost:', contentRecord.cost);
+    console.log('API Mode:', contentRecord.apiMode);
+    console.log('==================');
+    
+    res.json({
+      success: true,
+      data: contentRecord
+    });
+    
+  } catch (error) {
+    console.error('Content Generation Error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to generate content. Please check your API key and try again.'
+    });
+  }
+});
+
 // Backup endpoints redirecting to backup servers
 app.get('/backup/:type', (req, res) => {
   const adminKey = req.query.key;
@@ -2271,9 +2434,153 @@ Please provide a comprehensive business consultation with internet research and 
             closePricingModal();
         }
         
-        function generateContent() {
-            alert('Content generation feature requires API integration. Contact O. Francisca at +31 628073996 for setup and pricing information.');
+        async function generateContent() {
+            const mode = document.getElementById('content-api-mode').value;
+            const userApiKey = document.getElementById('user-perplexity-key').value;
+            
+            // Validate API key if using own
+            if (mode === 'own' && !userApiKey) {
+                alert('Please enter your Perplexity API key to use your own API.');
+                return;
+            }
+            
+            // Get form data
+            const seedKeywords = [];
+            document.querySelectorAll('#keywordRows input').forEach(input => {
+                if (input.value.trim()) {
+                    seedKeywords.push(input.value.trim());
+                }
+            });
+            
+            if (seedKeywords.length === 0) {
+                alert('Please enter at least one seed keyword.');
+                return;
+            }
+            
+            const language = document.getElementById('language').value;
+            const country = document.getElementById('country').value;
+            const articleSize = document.getElementById('article-size').value;
+            const readabilityLevel = document.getElementById('readability-level').value;
+            
+            const generateBtn = document.querySelector('#generate-btn-text');
+            const originalText = generateBtn.textContent;
+            generateBtn.textContent = 'Researching & Generating...';
+            
+            try {
+                const requestData = {
+                    seedKeywords: seedKeywords,
+                    language: language,
+                    country: country,
+                    articleSize: articleSize,
+                    readabilityLevel: readabilityLevel,
+                    apiMode: mode,
+                    userApiKey: mode === 'own' ? userApiKey : null
+                };
+                
+                const response = await fetch('/api/content/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showContentResult(result.data);
+                } else {
+                    alert(result.error || 'Content generation failed. Please try again.');
+                }
+                
+            } catch (error) {
+                console.error('Content generation error:', error);
+                alert('Content generation service temporarily unavailable. Please try again later.');
+            } finally {
+                generateBtn.textContent = originalText;
+            }
         }
+        
+        function showContentResult(data) {
+            const resultHTML = \`
+                <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                    <div class="bg-white rounded-lg max-w-6xl max-h-[90vh] overflow-y-auto p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold">Generated Content</h3>
+                            <button onclick="closeContentResult()" class="text-gray-500 hover:text-gray-700 text-2xl">×</button>
+                        </div>
+                        
+                        <div class="mb-4 p-4 bg-blue-50 rounded">
+                            <p class="text-sm">
+                                <strong>Article ID:</strong> \${data.id}<br>
+                                <strong>Language:</strong> \${data.language}<br>
+                                <strong>Word Count:</strong> \${data.wordCount}<br>
+                                <strong>SEO Score:</strong> \${data.seoScore}/100<br>
+                                <strong>Cost:</strong> \${data.cost}
+                            </p>
+                        </div>
+                        
+                        <div class="prose max-w-none">
+                            <h2 class="text-2xl font-bold mb-4">\${data.title}</h2>
+                            <div class="whitespace-pre-wrap bg-gray-50 p-4 rounded border-l-4 border-green-500">\${data.content}</div>
+                        </div>
+                        
+                        \${data.keywords && data.keywords.length > 0 ? \`
+                            <div class="mt-6 p-4 bg-gray-50 rounded">
+                                <h4 class="font-semibold mb-2">SEO Keywords Used:</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    \${data.keywords.map(keyword => \`<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">\${keyword}</span>\`).join('')}
+                                </div>
+                            </div>
+                        \` : ''}
+                        
+                        \${data.sources && data.sources.length > 0 ? \`
+                            <div class="mt-6 p-4 bg-gray-50 rounded">
+                                <h4 class="font-semibold mb-2">Research Sources:</h4>
+                                <ul class="list-disc pl-5">
+                                    \${data.sources.map(source => \`<li><a href="\${source}" target="_blank" class="text-blue-600 hover:underline">\${source}</a></li>\`).join('')}
+                                </ul>
+                            </div>
+                        \` : ''}
+                        
+                        <div class="mt-6 flex justify-center space-x-4">
+                            <button onclick="downloadContent('\${data.id}')" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
+                                Download Article
+                            </button>
+                            <button onclick="closeContentResult()" class="bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-700">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            \`;
+            
+            document.body.insertAdjacentHTML('beforeend', resultHTML);
+        }
+        
+        function closeContentResult() {
+            const modal = document.querySelector('.fixed.inset-0.bg-black');
+            if (modal) {
+                modal.remove();
+            }
+        }
+        
+        function downloadContent(articleId) {
+            // In production, this would trigger a download
+            alert('Download feature coming soon! Article ID: ' + articleId);
+        }
+        
+        // Add event listener for API mode change
+        document.addEventListener('change', function(e) {
+            if (e.target.id === 'content-api-mode') {
+                const ownApiSection = document.getElementById('own-api-section');
+                if (e.target.value === 'own') {
+                    ownApiSection.classList.remove('hidden');
+                } else {
+                    ownApiSection.classList.add('hidden');
+                }
+            }
+        });
         
         function refreshConsultations() {
             const adminKey = prompt('Enter admin password:');

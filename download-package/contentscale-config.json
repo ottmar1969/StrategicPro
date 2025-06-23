@@ -1,0 +1,159 @@
+{
+  "platform": {
+    "name": "ContentScale Platform",
+    "version": "1.0.0",
+    "description": "AI-powered content generation with fraud protection",
+    "tech_stack": {
+      "frontend": "React + TypeScript",
+      "backend": "Node.js + Express",
+      "database": "In-memory (upgradeable to PostgreSQL)",
+      "payments": "Stripe",
+      "styling": "Tailwind CSS + shadcn/ui"
+    }
+  },
+  "pricing": {
+    "free_tier": {
+      "first_article": "free_for_all",
+      "with_api_key": 10
+    },
+    "paid_tiers": {
+      "with_api_key": {
+        "price_per_article": 1,
+        "currency": "USD"
+      },
+      "without_api_key": {
+        "price_per_article": 10,
+        "currency": "USD"
+      }
+    },
+    "credit_packages": [
+      {
+        "id": "starter",
+        "name": "Starter Pack",
+        "credits": 5,
+        "price": 25,
+        "price_per_credit": 5.00,
+        "popular": false
+      },
+      {
+        "id": "popular",
+        "name": "Popular Pack", 
+        "credits": 10,
+        "price": 40,
+        "price_per_credit": 4.00,
+        "popular": true,
+        "savings": 20
+      },
+      {
+        "id": "professional",
+        "name": "Professional Pack",
+        "credits": 25,
+        "price": 75,
+        "price_per_credit": 3.00,
+        "popular": false,
+        "savings": 40
+      }
+    ]
+  },
+  "fraud_protection": {
+    "enabled": true,
+    "features": [
+      "vpn_detection",
+      "proxy_detection",
+      "datacenter_ip_blocking",
+      "browser_fingerprinting",
+      "session_tracking",
+      "rate_limiting",
+      "abuse_scoring"
+    ],
+    "risk_thresholds": {
+      "allow": 74,
+      "verify": 50,
+      "block": 75
+    },
+    "suspicious_providers": [
+      "amazonaws",
+      "googlecloud",
+      "azure",
+      "digitalocean",
+      "vultr",
+      "linode",
+      "ovh",
+      "hetzner",
+      "nordvpn",
+      "expressvpn",
+      "surfshark"
+    ]
+  },
+  "api_endpoints": {
+    "base_url": "",
+    "endpoints": {
+      "generate_content": "/api/generate-content",
+      "save_api_keys": "/api/api-keys",
+      "test_api": "/api/test-api",
+      "create_payment": "/api/create-payment-intent",
+      "payment_success": "/api/payment-success",
+      "get_user": "/api/user/:id",
+      "get_article": "/api/articles/:id"
+    }
+  },
+  "environment_variables": {
+    "required": [
+      "STRIPE_SECRET_KEY"
+    ],
+    "optional": [
+      "NODE_ENV",
+      "PORT"
+    ]
+  },
+  "deployment": {
+    "commands": {
+      "install": "npm install",
+      "dev": "npm run dev",
+      "build": "npm run build",
+      "start": "npm run start"
+    },
+    "ports": {
+      "development": 5000,
+      "production": 5000
+    }
+  },
+  "database_schema": {
+    "users": {
+      "fields": ["id", "credits", "freeArticlesUsed", "hasOwnApiKey", "userAgent", "ipAddress", "browserFingerprint", "sessionId", "isFlagged", "createdAt"]
+    },
+    "api_keys": {
+      "fields": ["id", "userId", "provider", "encryptedKey", "isActive", "createdAt", "expiresAt"]
+    },
+    "articles": {
+      "fields": ["id", "userId", "title", "content", "seoScore", "metadata", "isPaid", "paymentMethod", "createdAt"]
+    },
+    "payments": {
+      "fields": ["id", "userId", "articleId", "amount", "type", "status", "stripePaymentIntentId", "createdAt"]
+    },
+    "abuse_detection": {
+      "fields": ["id", "ipAddress", "browserFingerprint", "userAgent", "freeArticlesUsed", "usersCreated", "isBanned", "isVpn", "isProxy", "isDataCenter", "ipCountry", "ipRiskScore", "lastActivity", "createdAt"]
+    }
+  },
+  "business_model": {
+    "revenue_streams": [
+      "freemium_conversion",
+      "pay_per_article",
+      "credit_packages",
+      "white_label_licensing"
+    ],
+    "target_segments": [
+      "content_creators",
+      "small_businesses", 
+      "marketing_agencies",
+      "developers"
+    ],
+    "growth_projections": {
+      "conservative": {
+        "100_users": "$500-2000 MRR",
+        "1000_users": "$5K-20K MRR",
+        "10000_users": "$50K-200K MRR"
+      }
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import path from "path";
 import { createServer as createViteServer } from "vite";
 import routes from "./server/routes.js";
 import agentRoutes from "./server/agent-api.js";
@@ -38,6 +39,14 @@ async function startServer() {
   // API routes
   app.use(routes);
   app.use(agentRoutes);
+  
+  // Serve download page
+  app.get('/download', (req, res) => {
+    res.sendFile(path.join(process.cwd(), 'client/public/downloads/index.html'));
+  });
+  
+  // Serve static files from downloads directory
+  app.use('/downloads', express.static(path.join(process.cwd(), 'client/public/downloads')));
   
   // Vite middleware handles the frontend
   app.use(vite.middlewares);

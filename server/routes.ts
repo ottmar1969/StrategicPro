@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { aiConsultant } from './ai-consultant.js';
+import { keywordResearchAI } from './keyword-research.js';
 import { storage } from './storage.js';
 import { validateInput, requireAuth } from './security.js';
 import { ConsultationRequestSchema, BusinessProfileSchema } from '../shared/schema.js';
@@ -148,6 +149,62 @@ router.get("/api/admin/download-package", async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: "Package information not available" });
+  }
+});
+
+// Super AI Keyword Research Routes
+router.post('/api/keywords/generate', async (req, res) => {
+  try {
+    const { mainKeyword, niche, audience, count = 1 } = req.body;
+    
+    if (!mainKeyword) {
+      return res.status(400).json({ error: 'Main keyword is required' });
+    }
+
+    const keywords = await keywordResearchAI.generateKeywords({
+      mainKeyword,
+      niche,
+      audience
+    }, count);
+
+    res.json({ keywords });
+  } catch (error: any) {
+    console.error('Keyword generation error:', error);
+    res.status(500).json({ error: error.message || 'Failed to generate keywords' });
+  }
+});
+
+router.post('/api/titles/generate', async (req, res) => {
+  try {
+    const { mainKeyword, keywords, count = 1 } = req.body;
+    
+    if (!mainKeyword) {
+      return res.status(400).json({ error: 'Main keyword is required' });
+    }
+
+    const titles = await keywordResearchAI.generateTitles(mainKeyword, keywords || [], count);
+
+    res.json({ titles });
+  } catch (error: any) {
+    console.error('Title generation error:', error);
+    res.status(500).json({ error: error.message || 'Failed to generate titles' });
+  }
+});
+
+router.post('/api/outlines/generate', async (req, res) => {
+  try {
+    const { title, keywords, count = 1 } = req.body;
+    
+    if (!title) {
+      return res.status(400).json({ error: 'Title is required' });
+    }
+
+    const outlines = await keywordResearchAI.generateOutlines(title, keywords || [], count);
+
+    res.json({ outlines });
+  } catch (error: any) {
+    console.error('Outline generation error:', error);
+    res.status(500).json({ error: error.message || 'Failed to generate outlines' });
   }
 });
 

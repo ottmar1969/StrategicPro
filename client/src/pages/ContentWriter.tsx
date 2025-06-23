@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Wand2, Download, CreditCard, Key, ShieldCheck, Sparkles, Target, Globe } from "lucide-react";
+import { Wand2, Download, CreditCard, Key, ShieldCheck, Sparkles, Target, Globe, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -11,8 +11,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import KeywordResearchTable from "@/components/KeywordResearchTable";
 
 const ContentGenerationSchema = z.object({
   topic: z.string().min(5, "Topic must be at least 5 characters"),
@@ -192,9 +194,27 @@ export default function ContentWriter() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Content Generation Form */}
-          <div className="lg:col-span-2">
+        {/* Main Content Tabs */}
+        <Tabs defaultValue="research" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="research" className="flex items-center gap-2">
+              <Search className="h-4 w-4" />
+              Super AI Research
+            </TabsTrigger>
+            <TabsTrigger value="generator" className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4" />
+              Content Generator
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="research" className="mt-6">
+            <KeywordResearchTable />
+          </TabsContent>
+
+          <TabsContent value="generator" className="mt-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Content Generation Form */}
+              <div className="lg:col-span-2">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -699,6 +719,8 @@ export default function ContentWriter() {
             </CardContent>
           </Card>
         )}
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

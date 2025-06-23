@@ -52,6 +52,19 @@ app.get('/api/admin/download-package', (req, res) => {
   });
 });
 
+// Backup endpoints redirecting to backup server on port 3001
+app.get('/backup/:type', (req, res) => {
+  const adminKey = req.query.key;
+  const type = req.params.type;
+  
+  if (adminKey !== 'dev-admin-2025') {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  // Redirect to backup server
+  res.redirect(`http://localhost:3001/backup/${type}?key=${adminKey}`);
+});
+
 // Serve the complete application
 app.get('*', (req, res) => {
   const htmlContent = `
@@ -411,36 +424,66 @@ app.get('*', (req, res) => {
         }
         
         function showDownloadInterface() {
+            // Store admin key for API calls
+            sessionStorage.setItem('adminKey', 'dev-admin-2025');
+            
             const mainContent = document.getElementById('main-content');
             mainContent.innerHTML = \`
                 <div class="min-h-screen bg-gray-50 p-8">
-                    <div class="max-w-4xl mx-auto">
+                    <div class="max-w-6xl mx-auto">
                         <div class="bg-white rounded-lg shadow-lg p-8">
-                            <div class="text-center mb-8">
-                                <h1 class="text-3xl font-bold mb-4">Admin Download Center</h1>
-                                <p class="text-gray-600">Access authenticated - Download complete platform packages</p>
+                            <div class="flex justify-between items-center mb-6">
+                                <h1 class="text-3xl font-bold">ContentScale Admin Panel</h1>
+                                <a href="/" onclick="showHomePage()" class="text-blue-600 hover:underline">← Back to Home</a>
                             </div>
                             
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="bg-blue-50 p-6 rounded-lg">
-                                    <h3 class="text-xl font-semibold mb-2">Complete Platform Package</h3>
-                                    <p class="text-gray-600 mb-4">Full ContentScale application with all features (47.6KB)</p>
-                                    <button class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
-                                        Download Platform
-                                    </button>
+                            <div id="admin-panel">
+                                <h2 class="text-2xl font-bold mb-6">Admin Panel - ContentScale Platform</h2>
+                                
+                                <div class="mb-8">
+                                    <h3 class="text-lg font-semibold mb-4">📦 Backup Downloads (Starting with "01")</h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <div class="border border-gray-200 rounded-lg p-4 bg-blue-50">
+                                            <h4 class="font-semibold mb-2">01 - Complete Backup</h4>
+                                            <p class="text-gray-600 text-sm mb-4">Full project backup with all files, documentation, and configurations</p>
+                                            <button onclick="downloadBackup('complete')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors w-full">Download Complete</button>
+                                        </div>
+                                        
+                                        <div class="border border-gray-200 rounded-lg p-4 bg-green-50">
+                                            <h4 class="font-semibold mb-2">01 - GitHub Ready</h4>
+                                            <p class="text-gray-600 text-sm mb-4">GitHub-optimized backup with .gitignore and Actions workflow</p>
+                                            <button onclick="downloadBackup('github')" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors w-full">Download GitHub</button>
+                                        </div>
+                                        
+                                        <div class="border border-gray-200 rounded-lg p-4 bg-purple-50">
+                                            <h4 class="font-semibold mb-2">01 - Replit Backup</h4>
+                                            <p class="text-gray-600 text-sm mb-4">Replit-specific backup with .replit and nix configurations</p>
+                                            <button onclick="downloadBackup('replit')" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors w-full">Download Replit</button>
+                                        </div>
+                                    </div>
                                 </div>
                                 
-                                <div class="bg-green-50 p-6 rounded-lg">
-                                    <h3 class="text-xl font-semibold mb-2">GitHub Ready Package</h3>
-                                    <p class="text-gray-600 mb-4">Clean repository structure for deployment</p>
-                                    <button class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors">
-                                        Download GitHub Package
-                                    </button>
+                                <div class="mb-8">
+                                    <h3 class="text-lg font-semibold mb-4">📊 System Information</h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div class="border border-gray-200 rounded-lg p-4">
+                                            <h4 class="font-semibold mb-2">Project Status</h4>
+                                            <p class="text-gray-600 text-sm mb-4">View system status and backup information</p>
+                                            <button onclick="showBackupStatus()" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition-colors">View Status</button>
+                                        </div>
+                                        
+                                        <div class="border border-gray-200 rounded-lg p-4">
+                                            <h4 class="font-semibold mb-2">Legacy Download</h4>
+                                            <p class="text-gray-600 text-sm mb-4">Previous public site package</p>
+                                            <a href="/public-download.zip" download class="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 transition-colors inline-block">Legacy ZIP</a>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="mt-8 text-center">
-                                <a href="/" onclick="showHomePage()" class="text-blue-600 hover:underline">← Back to Home</a>
+                                
+                                <div id="backup-status" class="mt-6 p-4 bg-gray-50 rounded-lg" style="display: none;">
+                                    <h4 class="font-semibold mb-2">Backup Status</h4>
+                                    <div id="status-content">Loading...</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -794,6 +837,58 @@ app.get('*', (req, res) => {
         function showCookieSettings() {
             navigateTo('/cookies');
             acceptCookies();
+        }
+        
+        function downloadBackup(type) {
+            const adminKey = sessionStorage.getItem('adminKey');
+            if (!adminKey) {
+                alert('Admin authentication required');
+                return;
+            }
+            
+            const urls = {
+                'complete': '/backup/complete',
+                'github': '/backup/github', 
+                'replit': '/backup/replit'
+            };
+            
+            if (urls[type]) {
+                window.location.href = urls[type] + '?key=' + adminKey;
+            } else {
+                alert('Invalid backup type');
+            }
+        }
+        
+        async function showBackupStatus() {
+            const adminKey = sessionStorage.getItem('adminKey');
+            const statusDiv = document.getElementById('backup-status');
+            const contentDiv = document.getElementById('status-content');
+            
+            try {
+                const response = await fetch('/backup/status?key=' + adminKey);
+                const data = await response.json();
+                
+                contentDiv.innerHTML = \`
+                    <div style="margin-top: 1rem;">
+                        <p><strong>Timestamp:</strong> \${new Date(data.timestamp).toLocaleString()}</p>
+                        <p><strong>Project Size:</strong> \${data.projectSize}</p>
+                        <p><strong>Available Backups:</strong> \${data.availableBackups.join(', ')}</p>
+                        <div style="margin-top: 1rem;">
+                            <p><strong>Backup Contents:</strong></p>
+                            <ul style="margin-left: 2rem; list-style: disc;">
+                                <li><strong>Complete:</strong> \${data.includedPaths.complete.join(', ')}</li>
+                                <li><strong>GitHub:</strong> \${data.includedPaths.github.join(', ')}</li>
+                                <li><strong>Replit:</strong> \${data.includedPaths.replit.join(', ')}</li>
+                            </ul>
+                        </div>
+                    </div>
+                \`;
+                
+                statusDiv.style.display = 'block';
+            } catch (error) {
+                contentDiv.innerHTML = '<p class="text-red-600">Error loading backup status</p>';
+                statusDiv.style.display = 'block';
+            }
         }
         
         function generateContent() {

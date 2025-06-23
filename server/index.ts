@@ -9,6 +9,7 @@ import agentRoutes from "./agent-api.js";
 import contentRoutes from "./content-routes.js";
 import adminBackup from "./admin-backup.js";
 import phpConverter from "./php-converter.js";
+import backupSystem from "./backup-system.js";
 import { corsOptions, securityHeaders, sanitizeInput, agentAuth, createRateLimit } from "./security.js";
 
 const __filename = fileURLToPath(import.meta.url);

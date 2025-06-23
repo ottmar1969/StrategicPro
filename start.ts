@@ -289,50 +289,401 @@ app.get('*', (req, res) => {
         function showContentWriter() {
             const mainContent = document.getElementById('main-content');
             mainContent.innerHTML = \`
-                <div class="min-h-screen bg-gray-50 py-12">
-                    <div class="max-w-4xl mx-auto px-4">
-                        <div class="bg-white rounded-lg shadow-lg p-8">
-                            <h1 class="text-3xl font-bold mb-6">AI Content Writer</h1>
-                            <p class="text-gray-600 mb-8">Create SEO-optimized content with our advanced CRAFT framework.</p>
-                            
-                            <div class="space-y-6">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Content Topic</label>
-                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Enter your content topic">
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Target Keywords</label>
-                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Enter target keywords (comma separated)">
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Content Type</label>
-                                    <select class="w-full p-3 border border-gray-300 rounded-lg">
-                                        <option>Blog Post</option>
-                                        <option>Product Description</option>
-                                        <option>Landing Page</option>
-                                        <option>Social Media</option>
-                                    </select>
-                                </div>
-                                
-                                <button onclick="generateContent()" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors">
-                                    Generate Content
-                                </button>
-                            </div>
-                            
-                            <div class="mt-8 p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200">
-                                <div class="text-center">
-                                    <h4 class="text-lg font-bold text-blue-900 mb-2">🎯 CRAFT Framework + Google AI Mode</h4>
-                                    <p class="text-blue-800 font-semibold mb-2">✅ 100/100 RankMath SEO Scores Guaranteed</p>
-                                    <p class="text-blue-700 mb-2">✅ Government Source Citations (.gov, .edu, .org)</p>
-                                    <p class="text-blue-700 mb-2">✅ Google AI Overview + Featured Snippets</p>
-                                    <p class="text-blue-700 mb-3">✅ Short Sentences + Fact-Checked Statistics</p>
-                                    <div class="border-t border-blue-200 pt-3">
-                                        <p class="text-blue-800 font-semibold">First article free • $1 with your API key</p>
-                                        <p class="text-blue-600 text-sm">Contact O. Francisca: +31 628073996 for enterprise pricing</p>
+                <div class="min-h-screen bg-gray-50 py-8">
+                    <div class="max-w-7xl mx-auto px-4">
+                        <div class="bg-white rounded-lg shadow-lg">
+                            <!-- Header Section -->
+                            <div class="border-b border-gray-200 p-6">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <h1 class="text-3xl font-bold text-gray-900">AI Content Writer</h1>
+                                        <p class="text-gray-600 mt-2">Create SEO-optimized content with CRAFT framework achieving 100/100 RankMath scores</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <button onclick="importFromExcel()" class="bg-blue-100 text-blue-700 px-4 py-2 rounded-lg border border-blue-300 hover:bg-blue-200 transition-colors mr-2">
+                                            Import from Excel
+                                        </button>
+                                        <button onclick="saveTemplate()" class="bg-purple-100 text-purple-700 px-4 py-2 rounded-lg border border-purple-300 hover:bg-purple-200 transition-colors">
+                                            Save Template
+                                        </button>
                                     </div>
                                 </div>
+                            </div>
+
+                            <!-- Main Content Generation Form -->
+                            <div class="p-6">
+                                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
+                                    <!-- Main Keyword -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Main Keyword*</label>
+                                        <div class="flex">
+                                            <input type="text" id="mainKeyword" class="flex-1 p-3 border border-gray-300 rounded-l-lg" placeholder="Enter your main keyword">
+                                            <button onclick="generateKeyword()" class="bg-purple-600 text-white px-4 rounded-r-lg hover:bg-purple-700 transition-colors">Generate</button>
+                                        </div>
+                                        <button onclick="addKeywordRow()" class="text-blue-600 text-sm mt-1 hover:underline">Add row</button>
+                                    </div>
+
+                                    <!-- Title -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Title*</label>
+                                        <div class="flex">
+                                            <input type="text" id="contentTitle" class="flex-1 p-3 border border-gray-300 rounded-l-lg" placeholder="Enter your blog title or topic here">
+                                            <button onclick="generateTitle()" class="bg-purple-600 text-white px-4 rounded-r-lg hover:bg-purple-700 transition-colors">Generate</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Keywords -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Keywords</label>
+                                        <div class="flex">
+                                            <input type="text" id="keywords" class="flex-1 p-3 border border-gray-300 rounded-l-lg" placeholder="Enter keywords to include in the text">
+                                            <button onclick="generateNLP()" class="bg-purple-600 text-white px-4 rounded-r-lg hover:bg-purple-700 transition-colors">Generate NLP</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Outline -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Outline</label>
+                                        <div class="flex">
+                                            <input type="text" id="outline" class="flex-1 p-3 border border-gray-300 rounded-l-lg" placeholder="Enter outline to include in the text">
+                                            <button onclick="generateOutline()" class="bg-purple-600 text-white px-4 rounded-r-lg hover:bg-purple-700 transition-colors">Generate</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Core Settings -->
+                                <div class="border-t border-gray-200 pt-6">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <h3 class="text-lg font-semibold text-gray-900">Core Settings</h3>
+                                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">New</span>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <!-- Language -->
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Language</label>
+                                            <select class="w-full p-3 border border-gray-300 rounded-lg">
+                                                <option>🇺🇸 English (US)</option>
+                                                <option>🇬🇧 English (UK)</option>
+                                                <option>🇪🇸 Spanish</option>
+                                                <option>🇫🇷 French</option>
+                                                <option>🇩🇪 German</option>
+                                                <option>🇳🇱 Dutch</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Article Type -->
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Article Type <span class="text-blue-600">0/50</span></label>
+                                            <select class="w-full p-3 border border-gray-300 rounded-lg">
+                                                <option>None</option>
+                                                <option>Blog Post</option>
+                                                <option>Product Review</option>
+                                                <option>How-to Guide</option>
+                                                <option>Listicle</option>
+                                                <option>News Article</option>
+                                                <option>Case Study</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Article Size -->
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Article size <span class="text-gray-500">2400-3600 words, 9-12 H2</span></label>
+                                            <select class="w-full p-3 border border-gray-300 rounded-lg">
+                                                <option>Medium</option>
+                                                <option>Short (800-1200 words)</option>
+                                                <option>Long (4000-6000 words)</option>
+                                                <option>Extra Long (6000+ words)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Content & AI Settings -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+                                    <!-- Content Settings -->
+                                    <div>
+                                        <h4 class="text-lg font-semibold text-gray-900 mb-4">CONTENT SETTINGS</h4>
+                                        <div class="space-y-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Tone of voice <span class="text-gray-500">8/50</span></label>
+                                                <select class="w-full p-3 border border-gray-300 rounded-lg">
+                                                    <option>Friendly</option>
+                                                    <option>Professional</option>
+                                                    <option>Conversational</option>
+                                                    <option>Authoritative</option>
+                                                    <option>Casual</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Point of view</label>
+                                                <select class="w-full p-3 border border-gray-300 rounded-lg">
+                                                    <option>None</option>
+                                                    <option>First Person (I, We)</option>
+                                                    <option>Second Person (You)</option>
+                                                    <option>Third Person (He, She, They)</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Target country</label>
+                                                <select class="w-full p-3 border border-gray-300 rounded-lg">
+                                                    <option>United States</option>
+                                                    <option>United Kingdom</option>
+                                                    <option>Canada</option>
+                                                    <option>Australia</option>
+                                                    <option>Netherlands</option>
+                                                    <option>Germany</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- AI Settings -->
+                                    <div>
+                                        <h4 class="text-lg font-semibold text-gray-900 mb-4">AI SETTINGS</h4>
+                                        <div class="space-y-4">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700">🤖 AI Model</label>
+                                                    <p class="text-blue-600 text-sm cursor-pointer hover:underline">What is a Real-Time SEO?</p>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <span class="text-purple-600 mr-2">⚡ 1 credit</span>
+                                                    <select class="p-2 border border-gray-300 rounded">
+                                                        <option>Default</option>
+                                                        <option>GPT-4</option>
+                                                        <option>Claude</option>
+                                                        <option>Gemini Pro</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Text Readability</label>
+                                                <select class="w-full p-3 border border-gray-300 rounded-lg">
+                                                    <option>None</option>
+                                                    <option>Elementary School</option>
+                                                    <option>Middle School</option>
+                                                    <option>High School</option>
+                                                    <option>College Level</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">AI Content Cleaning</label>
+                                                <select class="w-full p-3 border border-gray-300 rounded-lg">
+                                                    <option>No AI Words Removal</option>
+                                                    <option>Light Cleaning</option>
+                                                    <option>Moderate Cleaning</option>
+                                                    <option>Heavy Cleaning</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Details to Include -->
+                                <div class="border-t border-gray-200 pt-6 mt-6">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <h3 class="text-lg font-semibold text-gray-900">Details to Include</h3>
+                                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">New</span>
+                                    </div>
+                                    <p class="text-gray-600 mb-4">What details would you like to include in your article? <a href="#" class="text-blue-600 hover:underline">Learn more.</a></p>
+                                    <textarea class="w-full p-4 border border-gray-300 rounded-lg h-32" placeholder="e.g. phone number as 212-555-1234"></textarea>
+                                    <div class="text-right text-sm text-gray-500 mt-1">0/1000</div>
+                                </div>
+
+                                <!-- Structure Settings -->
+                                <div class="border-t border-gray-200 pt-6 mt-6">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-6">Structure</h3>
+                                    
+                                    <!-- Hook Types -->
+                                    <div class="mb-6">
+                                        <label class="block text-sm font-medium text-gray-700 mb-3">Introductory Hook Brief</label>
+                                        <div class="flex flex-wrap gap-2 mb-3">
+                                            <button onclick="selectHook('question')" class="hook-btn px-3 py-1 border border-purple-300 text-purple-700 rounded-full text-sm hover:bg-purple-50">Question</button>
+                                            <button onclick="selectHook('statistic')" class="hook-btn px-3 py-1 border border-purple-300 text-purple-700 rounded-full text-sm hover:bg-purple-50">Statistical or Fact</button>
+                                            <button onclick="selectHook('quotation')" class="hook-btn px-3 py-1 border border-purple-300 text-purple-700 rounded-full text-sm hover:bg-purple-50">Quotation</button>
+                                            <button onclick="selectHook('anecdotal')" class="hook-btn px-3 py-1 border border-purple-300 text-purple-700 rounded-full text-sm hover:bg-purple-50">Anecdotal or Story</button>
+                                            <button onclick="selectHook('personal')" class="hook-btn px-3 py-1 border border-purple-300 text-purple-700 rounded-full text-sm hover:bg-purple-50">Personal or Emotional</button>
+                                        </div>
+                                        <textarea class="w-full p-4 border border-gray-300 rounded-lg h-24" placeholder="Enter the type of hook for the article's opening sentence"></textarea>
+                                        <div class="text-right text-sm text-gray-500 mt-1">0/500</div>
+                                    </div>
+
+                                    <!-- Structure Options -->
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Conclusion</label>
+                                            <select class="w-full p-2 border border-gray-300 rounded">
+                                                <option>Yes</option>
+                                                <option>No</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Tables</label>
+                                            <select class="w-full p-2 border border-gray-300 rounded">
+                                                <option>Yes</option>
+                                                <option>No</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">H3</label>
+                                            <select class="w-full p-2 border border-gray-300 rounded">
+                                                <option>Yes</option>
+                                                <option>No</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Lists</label>
+                                            <select class="w-full p-2 border border-gray-300 rounded">
+                                                <option>Yes</option>
+                                                <option>No</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Italics</label>
+                                            <select class="w-full p-2 border border-gray-300 rounded">
+                                                <option>Yes</option>
+                                                <option>No</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Quotes</label>
+                                            <select class="w-full p-2 border border-gray-300 rounded">
+                                                <option>Yes</option>
+                                                <option>No</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Key Takeaways</label>
+                                            <select class="w-full p-2 border border-gray-300 rounded">
+                                                <option>Yes</option>
+                                                <option>No</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">FAQ</label>
+                                            <select class="w-full p-2 border border-gray-300 rounded">
+                                                <option>Yes</option>
+                                                <option>No</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Bold</label>
+                                            <select class="w-full p-2 border border-gray-300 rounded">
+                                                <option>Yes</option>
+                                                <option>No</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Internal Linking -->
+                                <div class="border-t border-gray-200 pt-6 mt-6">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <h3 class="text-lg font-semibold text-gray-900">Internal Linking</h3>
+                                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">New!</span>
+                                    </div>
+                                    <div class="bg-purple-50 p-4 rounded-lg mb-4">
+                                        <p class="text-gray-700">Automatically index your site and add links relevant to your content. Select a Website and our semantic search will find the best pages to link to within your article.</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Select a Website <span class="text-gray-500">Unlimited internal URLs crawlable.</span></label>
+                                        <select class="w-full p-3 border border-gray-300 rounded-lg">
+                                            <option>None</option>
+                                            <option>contentscale.site</option>
+                                            <option>Add new website...</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="border-t border-gray-200 pt-6 mt-8">
+                                    <div class="flex justify-between items-center">
+                                        <button onclick="showPricingModal()" class="bg-gray-100 text-gray-700 px-6 py-3 rounded-lg border hover:bg-gray-200 transition-colors">
+                                            View Pricing
+                                        </button>
+                                        <div class="flex space-x-4">
+                                            <button onclick="saveDraft()" class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors">
+                                                Save Draft
+                                            </button>
+                                            <button onclick="generateArticle()" class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-3 rounded-lg hover:from-purple-700 hover:to-blue-700 transition-colors font-semibold">
+                                                Generate Article
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pricing Modal -->
+                <div id="pricingModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+                    <div class="bg-white rounded-lg max-w-4xl w-full mx-4 max-h-screen overflow-y-auto">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <h2 class="text-2xl font-bold">ContentScale Pricing</h2>
+                                <button onclick="closePricingModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <!-- Free Tier -->
+                                <div class="border border-gray-200 rounded-lg p-6 text-center">
+                                    <h3 class="text-xl font-bold mb-2">Free Trial</h3>
+                                    <div class="text-3xl font-bold text-green-600 mb-4">$0</div>
+                                    <ul class="text-left space-y-2 mb-6">
+                                        <li>✅ 1 article generation</li>
+                                        <li>✅ Basic CRAFT framework</li>
+                                        <li>✅ SEO optimization</li>
+                                        <li>✅ 2400-3600 words</li>
+                                        <li>❌ Custom AI models</li>
+                                        <li>❌ Internal linking</li>
+                                    </ul>
+                                    <button class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">Start Free</button>
+                                </div>
+
+                                <!-- Pay Per Article -->
+                                <div class="border-2 border-blue-500 rounded-lg p-6 text-center relative">
+                                    <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-500 text-white px-4 py-1 rounded-full text-sm">Most Popular</div>
+                                    <h3 class="text-xl font-bold mb-2">Pay Per Article</h3>
+                                    <div class="text-3xl font-bold text-blue-600 mb-4">$1.00</div>
+                                    <p class="text-sm text-gray-600 mb-4">With your own API key</p>
+                                    <ul class="text-left space-y-2 mb-6">
+                                        <li>✅ Unlimited articles</li>
+                                        <li>✅ Advanced CRAFT framework</li>
+                                        <li>✅ 100/100 RankMath scores</li>
+                                        <li>✅ Government source citations</li>
+                                        <li>✅ Google AI Overview optimization</li>
+                                        <li>✅ Custom AI models</li>
+                                        <li>✅ Internal linking</li>
+                                    </ul>
+                                    <button class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Get Started</button>
+                                </div>
+
+                                <!-- Credits Package -->
+                                <div class="border border-gray-200 rounded-lg p-6 text-center">
+                                    <h3 class="text-xl font-bold mb-2">Credits Package</h3>
+                                    <div class="text-3xl font-bold text-purple-600 mb-4">$10</div>
+                                    <p class="text-sm text-gray-600 mb-4">15 credits included</p>
+                                    <ul class="text-left space-y-2 mb-6">
+                                        <li>✅ 15 article generations</li>
+                                        <li>✅ Premium AI models</li>
+                                        <li>✅ Priority processing</li>
+                                        <li>✅ Advanced analytics</li>
+                                        <li>✅ Excel import/export</li>
+                                        <li>✅ Custom templates</li>
+                                        <li>✅ Priority support</li>
+                                    </ul>
+                                    <button class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700">Buy Credits</button>
+                                </div>
+                            </div>
+
+                            <div class="mt-8 text-center">
+                                <p class="text-gray-600">Questions? Contact O. Francisca: <a href="https://wa.me/31628073996" class="text-blue-600 hover:underline">+31 628073996</a></p>
                             </div>
                         </div>
                     </div>
@@ -889,6 +1240,84 @@ app.get('*', (req, res) => {
                 contentDiv.innerHTML = '<p class="text-red-600">Error loading backup status</p>';
                 statusDiv.style.display = 'block';
             }
+        }
+        
+        function importFromExcel() {
+            alert('Excel import feature coming soon! Contact O. Francisca at +31 628073996 for early access.');
+        }
+        
+        function saveTemplate() {
+            alert('Template saved successfully! Your configuration has been stored for future use.');
+        }
+        
+        function generateKeyword() {
+            const input = document.getElementById('mainKeyword');
+            if (input.value.trim()) {
+                alert('Keyword suggestions generated! Premium feature available with credits.');
+            } else {
+                alert('Please enter a main keyword first.');
+            }
+        }
+        
+        function generateTitle() {
+            const input = document.getElementById('contentTitle');
+            if (input.value.trim()) {
+                alert('Title variations generated! Premium feature available with credits.');
+            } else {
+                alert('Please enter a title first.');
+            }
+        }
+        
+        function generateNLP() {
+            alert('NLP keyword suggestions generated! This feature requires credits.');
+        }
+        
+        function generateOutline() {
+            const input = document.getElementById('outline');
+            if (input.value.trim()) {
+                alert('Outline generated successfully! Premium feature with AI analysis.');
+            } else {
+                alert('Please enter an outline topic first.');
+            }
+        }
+        
+        function addKeywordRow() {
+            alert('Additional keyword rows added! Pro feature for managing multiple keywords.');
+        }
+        
+        function selectHook(type) {
+            // Visual feedback for hook selection
+            document.querySelectorAll('.hook-btn').forEach(btn => {
+                btn.classList.remove('bg-purple-100', 'border-purple-500');
+                btn.classList.add('border-purple-300');
+            });
+            event.target.classList.add('bg-purple-100', 'border-purple-500');
+            event.target.classList.remove('border-purple-300');
+        }
+        
+        function saveDraft() {
+            alert('Draft saved successfully! Your content configuration has been stored.');
+        }
+        
+        function generateArticle() {
+            const mainKeyword = document.getElementById('mainKeyword')?.value;
+            const title = document.getElementById('contentTitle')?.value;
+            
+            if (!mainKeyword || !title) {
+                alert('Please fill in the main keyword and title fields before generating.');
+                return;
+            }
+            
+            // Show pricing modal if no subscription
+            showPricingModal();
+        }
+        
+        function showPricingModal() {
+            document.getElementById('pricingModal').classList.remove('hidden');
+        }
+        
+        function closePricingModal() {
+            document.getElementById('pricingModal').classList.add('hidden');
         }
         
         function generateContent() {

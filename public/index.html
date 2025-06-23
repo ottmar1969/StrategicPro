@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ContentScale - AI Business Consulting Platform</title>
+  <meta name="description" content="Professional business consulting platform powered by AI, offering expert analysis across 12 key business areas.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; background: #f8fafc; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem 0; text-align: center; }
+    .hero h1 { font-size: 3rem; margin-bottom: 1rem; }
+    .hero p { font-size: 1.3rem; margin-bottom: 2rem; opacity: 0.9; }
+    .status-card { background: white; border-radius: 12px; padding: 2rem; margin: 2rem 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .status-indicator { display: inline-block; width: 12px; height: 12px; background: #10b981; border-radius: 50%; margin-right: 8px; }
+    .api-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+    .api-card { background: white; border-radius: 8px; padding: 1.5rem; border-left: 4px solid #3b82f6; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .api-card h3 { color: #1f2937; margin-bottom: 1rem; }
+    .api-endpoint { background: #f1f5f9; padding: 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 0.9rem; margin: 0.5rem 0; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 2rem 0; }
+    .feature { background: #f0f9ff; padding: 1.5rem; border-radius: 8px; text-align: center; }
+    .feature-icon { font-size: 2rem; margin-bottom: 1rem; }
+    .btn { display: inline-block; background: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 0.5rem; transition: background 0.3s; }
+    .btn:hover { background: #2563eb; }
+    .btn-secondary { background: #6b7280; }
+    .btn-secondary:hover { background: #4b5563; }
+    footer { background: #1f2937; color: white; padding: 2rem 0; text-align: center; margin-top: 4rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container hero">
+      <h1>ContentScale</h1>
+      <p>AI-Powered Business Consulting Platform</p>
+      <div style="margin-top: 2rem;">
+        <a href="#apis" class="btn">View APIs</a>
+        <a href="#admin" class="btn btn-secondary">Admin Access</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="status-card">
+      <h2><span class="status-indicator"></span>Platform Status</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+        <div><strong>Service:</strong> Online & Operational</div>
+        <div><strong>Version:</strong> 1.0.0</div>
+        <div><strong>AI Engine:</strong> Google Gemini</div>
+        <div><strong>Categories:</strong> 12 Consulting Areas</div>
+        <div><strong>Contact:</strong> consultant@contentscale.site</div>
+        <div><strong>Deployment:</strong> Production Ready</div>
+      </div>
+    </div>
+
+    <section id="apis">
+      <h2>API Endpoints</h2>
+      <div class="api-grid">
+        <div class="api-card">
+          <h3>Health & Status</h3>
+          <div class="api-endpoint">GET / - Service health check</div>
+          <div class="api-endpoint">GET /api/agent/status - Platform capabilities</div>
+          <div class="api-endpoint">GET /api/agent/health - System health</div>
+        </div>
+        
+        <div class="api-card">
+          <h3>Business Consulting</h3>
+          <div class="api-endpoint">POST /api/consultations - Create consultation</div>
+          <div class="api-endpoint">GET /api/consultations - List consultations</div>
+          <div class="api-endpoint">GET /api/analysis/{id} - Get analysis results</div>
+          <div class="api-endpoint">POST /api/business-profiles - Create profile</div>
+        </div>
+        
+        <div class="api-card">
+          <h3>Agent Automation</h3>
+          <div class="api-endpoint">POST /api/agent/batch-consultations - Batch processing</div>
+          <div class="api-endpoint">POST /api/agent/quick-analysis - Quick analysis</div>
+          <div class="api-endpoint">GET /api/agent/export-data - Data export</div>
+        </div>
+        
+        <div class="api-card">
+          <h3>Content Generation</h3>
+          <div class="api-endpoint">POST /api/content/generate - AI content creation</div>
+          <div class="api-endpoint">POST /api/content/check-eligibility - User verification</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Consulting Categories</h2>
+      <div class="features-grid">
+        <div class="feature">
+          <div class="feature-icon">🔍</div>
+          <h4>SEO Optimization</h4>
+          <p>Technical audits and strategy</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">📊</div>
+          <h4>Business Strategy</h4>
+          <p>Market analysis and planning</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">💰</div>
+          <h4>Financial Planning</h4>
+          <p>CFO-level financial guidance</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">📈</div>
+          <h4>Marketing Strategy</h4>
+          <p>Digital marketing and growth</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">⚙️</div>
+          <h4>Operations</h4>
+          <p>Process optimization</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">👥</div>
+          <h4>Human Resources</h4>
+          <p>Talent and organization</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">💻</div>
+          <h4>IT Consulting</h4>
+          <p>Technology strategy</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">⚖️</div>
+          <h4>Legal Compliance</h4>
+          <p>Risk and compliance</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">💼</div>
+          <h4>Sales Performance</h4>
+          <p>Revenue optimization</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">😊</div>
+          <h4>Customer Experience</h4>
+          <p>Journey optimization</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🌱</div>
+          <h4>Sustainability</h4>
+          <p>ESG and environmental</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🔒</div>
+          <h4>Cybersecurity</h4>
+          <p>Security assessment</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="admin" class="status-card">
+      <h2>Admin Access</h2>
+      <p>For administrative functions including project downloads and backups:</p>
+      <div style="margin-top: 1rem;">
+        <a href="/admin/download" class="btn">Admin Dashboard</a>
+        <p style="margin-top: 1rem; font-size: 0.9rem; color: #6b7280;">
+          Requires admin authentication for access to download features, project backups, and PHP conversion tools.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 ContentScale Platform. Professional Business Consulting Powered by AI.</p>
+      <p style="margin-top: 0.5rem; opacity: 0.8;">
+        Built with TypeScript, React, Express.js, and Google Gemini AI
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // Test API connectivity
+    fetch('/api/agent/status')
+      .then(response => response.json())
+      .then(data => {
+        console.log('API Status:', data);
+        document.querySelector('.status-indicator').style.background = '#10b981';
+      })
+      .catch(error => {
+        console.log('API connection issue:', error);
+        document.querySelector('.status-indicator').style.background = '#ef4444';
+      });
+  </script>
+</body>
+</html>

@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import session from "express-session";
+import fs from "fs";
 import { fileURLToPath } from 'url';
 import routes from "./routes.js";
 import agentRoutes from "./agent-api.js";
@@ -57,19 +58,126 @@ async function startProductionServer() {
   app.use(adminBackup);
   app.use(phpConverter);
   
-  // Serve static files in production
-  if (process.env.NODE_ENV === 'production') {
-    const distPath = path.join(__dirname, '../dist');
-    app.use(express.static(distPath));
-    
-    // Handle SPA routing - but not for API routes or health check
-    app.get('*', (req, res, next) => {
-      if (req.path.startsWith('/api/') || req.path === '/') {
-        return next();
-      }
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
+  // Serve static files - prioritize public directory for deployment
+  const staticPaths = [
+    path.join(process.cwd(), 'public'),
+    path.join(__dirname, '../public'),
+    path.join(__dirname, '../dist'),
+    path.join(__dirname, '../client'),
+    path.join(process.cwd(), 'client')
+  ];
+  
+  for (const staticPath of staticPaths) {
+    if (fs.existsSync(staticPath)) {
+      app.use(express.static(staticPath));
+      console.log(`Serving static files from: ${staticPath}`);
+      break;
+    }
   }
+  
+  // Handle fallback routing without path-to-regexp issues
+  app.use((req, res, next) => {
+    // Skip API routes and admin downloads
+    if (req.path.startsWith('/api/') || req.path.startsWith('/admin/download/')) {
+      return next();
+    }
+    
+    // Try to serve index.html from various locations
+    const indexPaths = [
+      path.join(__dirname, '../dist/index.html'),
+      path.join(__dirname, '../client/dist/index.html'), 
+      path.join(__dirname, '../client/index.html'),
+      path.join(process.cwd(), 'dist/index.html'),
+      path.join(process.cwd(), 'client/dist/index.html'),
+      path.join(process.cwd(), 'client/index.html')
+    ];
+    
+    let indexPath = null;
+    for (const testPath of indexPaths) {
+      if (fs.existsSync(testPath)) {
+        indexPath = testPath;
+        break;
+      }
+    }
+    
+    if (indexPath) {
+      res.sendFile(indexPath);
+    } else {
+      // Create a basic HTML page if index.html doesn't exist
+      res.send(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>ContentScale - AI Business Consulting</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 0; padding: 40px; background: #f5f5f5; }
+            .container { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+            h1 { color: #2563eb; margin-bottom: 20px; }
+            .status { padding: 20px; background: #e7f3ff; border-radius: 4px; margin: 20px 0; }
+            .api-list { background: #f8f9fa; padding: 20px; border-radius: 4px; margin: 20px 0; }
+            code { background: #e9ecef; padding: 2px 6px; border-radius: 3px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1>ContentScale - AI Business Consulting Platform</h1>
+            <div class="status">
+              <strong>Status:</strong> Server is running successfully!<br>
+              <strong>Service:</strong> Professional Business Consulting with AI<br>
+              <strong>Version:</strong> 1.0.0<br>
+              <strong>Contact:</strong> consultant@contentscale.site
+            </div>
+            
+            <h2>API Endpoints Available:</h2>
+            <div class="api-list">
+              <h3>Health Check:</h3>
+              <p><code>GET /</code> - Service health status</p>
+              
+              <h3>Consulting APIs:</h3>
+              <p><code>POST /api/consultations</code> - Create consultation request</p>
+              <p><code>GET /api/consultations</code> - List all consultations</p>
+              <p><code>GET /api/analysis/{id}</code> - Get analysis results</p>
+              <p><code>POST /api/business-profiles</code> - Create business profile</p>
+              
+              <h3>Agent APIs:</h3>
+              <p><code>GET /api/agent/status</code> - Service capabilities</p>
+              <p><code>GET /api/agent/health</code> - Health monitoring</p>
+              <p><code>POST /api/agent/batch-consultations</code> - Batch processing</p>
+              <p><code>POST /api/agent/quick-analysis</code> - Quick analysis</p>
+              
+              <h3>Content APIs:</h3>
+              <p><code>POST /api/content/generate</code> - Generate content</p>
+              <p><code>POST /api/content/check-eligibility</code> - Check user eligibility</p>
+            </div>
+            
+            <h2>Features:</h2>
+            <ul>
+              <li>12 Consulting Categories: SEO, Business Strategy, Financial, Marketing, Operations, HR, IT, Legal, Sales, Customer Experience, Sustainability, Cybersecurity</li>
+              <li>AI-Powered Analysis using Google Gemini</li>
+              <li>Comprehensive Business Reports</li>
+              <li>Content Generation with Fraud Protection</li>
+              <li>Agent API for Automation</li>
+              <li>Security: Rate limiting, Input sanitization, CORS</li>
+            </ul>
+            
+            <p><strong>Note:</strong> This is the API server view. The React frontend will be available when properly built and deployed.</p>
+          </div>
+        </body>
+        </html>
+      `);
+    }
+  });
+  
+  // Simple 404 handler
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/api/')) {
+      res.status(404).json({ error: 'API endpoint not found' });
+    } else {
+      next();
+    }
+  });
   
   const port = process.env.PORT || 5173;
   

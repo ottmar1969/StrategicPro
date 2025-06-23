@@ -308,9 +308,17 @@ app.get('*', (req, res) => {
                                 </button>
                             </div>
                             
-                            <div class="mt-8 p-4 bg-blue-50 rounded-lg">
-                                <p class="text-blue-800 font-semibold">First article free • $1 with your API key</p>
-                                <p class="text-blue-600 text-sm">Contact: +31 628073996 for enterprise pricing</p>
+                            <div class="mt-8 p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200">
+                                <div class="text-center">
+                                    <h4 class="text-lg font-bold text-blue-900 mb-2">🎯 CRAFT Framework + Google AI Mode</h4>
+                                    <p class="text-blue-800 font-semibold mb-2">✅ 10/10 RankMath SEO Scores Guaranteed</p>
+                                    <p class="text-blue-700 mb-2">✅ Google AI Overview Optimization</p>
+                                    <p class="text-blue-700 mb-3">✅ Featured Snippet Ready Content</p>
+                                    <div class="border-t border-blue-200 pt-3">
+                                        <p class="text-blue-800 font-semibold">First article free • $1 with your API key</p>
+                                        <p class="text-blue-600 text-sm">Contact O. Francisca: +31 628073996 for enterprise pricing</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -143,11 +143,59 @@ class AIConsultant {
       const categoryExpertise = this.consultingCategories[category as keyof typeof this.consultingCategories] || 'General Business';
       
       const enhancedPrompt = `
-        As a ${categoryExpertise} expert, create high-quality content based on the following request:
-        
+        You are a world-class SEO content writer and ${categoryExpertise} expert. Your task is to create content that achieves a perfect 10/10 RankMath SEO score using the advanced CRAFT framework.
+
+        CRAFT FRAMEWORK IMPLEMENTATION:
+        C - CAPTIVATE: Hook readers instantly with compelling headlines and openings
+        R - RESEARCH: Include data-driven insights, statistics, and authoritative sources
+        A - AUTHORITY: Demonstrate expertise through detailed analysis and industry knowledge
+        F - FLOW: Structure content logically with smooth transitions and scannable format
+        T - TRUST: Build credibility with accurate information and transparent expertise
+
+        GOOGLE AI MODE OPTIMIZATION:
+        - Optimize for Google AI Overview snippets and featured snippets
+        - Structure content to answer specific user queries comprehensively
+        - Include semantic keywords and related terms naturally
+        - Format with clear headings, bullet points, and numbered lists
+        - Provide direct, actionable answers to user questions
+
+        RANKMATH 10/10 SEO REQUIREMENTS:
+        - Target keyword density: 0.5-2.5% (natural integration)
+        - Include LSI keywords and semantic variations
+        - Meta title: 50-60 characters, include target keyword
+        - Meta description: 150-160 characters, compelling and keyword-rich
+        - Use H1, H2, H3 structure properly with keywords in headings
+        - Include internal and external linking opportunities
+        - Add schema markup suggestions where relevant
+        - Optimize for featured snippets with FAQ sections
+        - Include table of contents for long-form content
+        - Add related keywords and entities Google associates with the topic
+
+        ADVANCED SEO TECHNIQUES:
+        - Write for E-A-T (Expertise, Authoritativeness, Trustworthiness)
+        - Include People Also Ask (PAA) questions and answers
+        - Optimize for voice search with conversational queries
+        - Add location-specific content where relevant
+        - Include trending and newsworthy angles when applicable
+        - Structure for Core Web Vitals optimization
+        - Add social proof and credibility indicators
+
+        CONTENT REQUEST:
         ${prompt}
         
         ${businessContext ? `Business Context: ${JSON.stringify(businessContext, null, 2)}` : ''}
+
+        DELIVERABLES:
+        1. SEO-optimized article (1500-3000 words)
+        2. Meta title and description
+        3. H1, H2, H3 heading structure with keywords
+        4. FAQ section for Google AI Overview
+        5. Key takeaways summary
+        6. Internal/external linking suggestions
+        7. Schema markup recommendations
+        8. Social media snippets for promotion
+
+        Create content that ranks #1 on Google and gets featured in AI overviews. Focus on user intent, comprehensive coverage, and technical SEO excellence.
         
         Please ensure the content is:
         - Professional and actionable

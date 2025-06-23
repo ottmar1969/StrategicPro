@@ -129,4 +129,19 @@ router.post("/api/business-overview", async (req, res) => {
   }
 });
 
+// Download Package Route
+router.get("/api/download-package", async (req, res) => {
+  try {
+    res.json({
+      status: "available",
+      filename: "ContentScale-Consulting-AI-App-1-2025-06-23T02-01-33-495Z.zip",
+      size: 47682,
+      downloadUrl: "/downloads/ContentScale-Consulting-AI-App-1-2025-06-23T02-01-33-495Z.zip",
+      description: "Complete ContentScale Consulting AI App 1 package"
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Package information not available" });
+  }
+});
+
 export default router;

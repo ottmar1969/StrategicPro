@@ -95,24 +95,12 @@ Contact: consultant@contentscale.site`);
           <p className="font-medium">Size: 47,682 bytes</p>
         </div>
         
-        <Button 
-          onClick={handleDownload} 
-          disabled={isDownloading}
-          className="w-full"
-          size="lg"
-        >
-          {isDownloading ? (
-            <>
-              <Download className="mr-2 h-4 w-4 animate-spin" />
-              Preparing Download...
-            </>
-          ) : (
-            <>
-              <Download className="mr-2 h-4 w-4" />
-              Download Application Package
-            </>
-          )}
-        </Button>
+        <a href="/download">
+          <Button className="w-full" size="lg">
+            <Download className="mr-2 h-4 w-4" />
+            Access Download Page
+          </Button>
+        </a>
         
         <div className="text-xs text-muted-foreground space-y-1">
           <p>📧 consultant@contentscale.site</p>

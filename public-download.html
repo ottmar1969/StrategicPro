@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ContentScale Consulting AI App 1 - Download</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+        }
+        h1 { font-size: 2.5em; margin-bottom: 20px; font-weight: 600; }
+        .package-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .download-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 16px 32px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+        .download-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+        .features { text-align: left; margin: 20px 0; }
+        .features ul { list-style: none; }
+        .features li { padding: 5px 0; padding-left: 20px; position: relative; }
+        .features li::before { content: "✓"; position: absolute; left: 0; color: #4CAF50; font-weight: bold; }
+        .contact { margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.2); }
+        .download-link { color: #4CAF50; font-weight: bold; word-break: break-all; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ContentScale Consulting AI App 1</h1>
+        
+        <div class="package-info">
+            <h3>Package Information</h3>
+            <p><strong>File:</strong> ContentScale-Consulting-AI-App-1-2025-06-23T02-01-33-495Z.zip</p>
+            <p><strong>Size:</strong> 47,682 bytes</p>
+            <p><strong>Type:</strong> Complete business consulting application</p>
+            <p><strong>Ready for agent integration</strong></p>
+        </div>
+
+        <a href="./ContentScale-Consulting-AI-App-1-2025-06-23T02-01-33-495Z.zip" 
+           class="download-btn" 
+           download="ContentScale-Consulting-AI-App-1.zip">
+            Download Complete Package
+        </a>
+
+        <div class="package-info">
+            <h3>Direct Download Link:</h3>
+            <p class="download-link">./ContentScale-Consulting-AI-App-1-2025-06-23T02-01-33-495Z.zip</p>
+        </div>
+
+        <div class="features">
+            <h3>Included Features:</h3>
+            <ul>
+                <li>12 Professional consulting categories</li>
+                <li>Google Gemini AI integration</li>
+                <li>Agent automation APIs</li>
+                <li>Security and rate limiting</li>
+                <li>Professional dashboard and reporting</li>
+                <li>Business profile management</li>
+                <li>Complete documentation</li>
+                <li>Ready for immediate deployment</li>
+            </ul>
+        </div>
+
+        <div class="package-info">
+            <h3>Quick Installation:</h3>
+            <ol style="text-align: left;">
+                <li>Extract the zip file</li>
+                <li>Run: npm install</li>
+                <li>Set: GEMINI_API_KEY=your_key</li>
+                <li>Start: tsx dev-server.ts</li>
+                <li>Access: http://localhost:5173</li>
+            </ol>
+        </div>
+
+        <div class="contact">
+            <p><strong>Contact:</strong> consultant@contentscale.site</p>
+            <p>Professional AI-powered business consulting platform</p>
+        </div>
+    </div>
+
+    <script>
+        // Auto-download functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const downloadBtn = document.querySelector('.download-btn');
+            downloadBtn.addEventListener('click', function(e) {
+                // Try multiple download methods
+                setTimeout(() => {
+                    window.open('./ContentScale-Consulting-AI-App-1-2025-06-23T02-01-33-495Z.zip', '_blank');
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>

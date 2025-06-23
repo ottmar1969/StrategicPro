@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import ConsultationForm from "./pages/ConsultationForm";
 import AnalysisResults from "./pages/AnalysisResults";
 import BusinessProfile from "./pages/BusinessProfile";
+import DownloadPage from "./pages/Download";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/consultation" component={ConsultationForm} />
           <Route path="/analysis/:id" component={AnalysisResults} />
           <Route path="/business-profile" component={BusinessProfile} />
+          <Route path="/download" component={DownloadPage} />
         </Router>
         <Toaster />
       </div>

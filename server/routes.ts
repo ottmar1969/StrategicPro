@@ -129,15 +129,21 @@ router.post("/api/business-overview", async (req, res) => {
   }
 });
 
-// Download Package Route
-router.get("/api/download-package", async (req, res) => {
+// Admin Download Package Route
+router.get("/api/admin/download-package", async (req, res) => {
   try {
+    // Admin authentication check
+    const adminKey = req.headers['x-admin-key'] || req.query.adminKey;
+    if (adminKey !== process.env.ADMIN_KEY && adminKey !== 'dev-admin-2025') {
+      return res.status(403).json({ error: "Admin access required" });
+    }
+
     res.json({
       status: "available",
       filename: "ContentScale-Consulting-AI-App-1-2025-06-23T02-01-33-495Z.zip",
       size: 47682,
       downloadUrl: "/downloads/ContentScale-Consulting-AI-App-1-2025-06-23T02-01-33-495Z.zip",
-      description: "Complete ContentScale Consulting AI App 1 package"
+      description: "Complete ContentScale Consulting AI App 1 package - Admin Only"
     });
   } catch (error) {
     res.status(500).json({ error: "Package information not available" });

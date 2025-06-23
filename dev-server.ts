@@ -6,6 +6,8 @@ import { createServer as createViteServer } from "vite";
 import routes from "./server/routes.js";
 import agentRoutes from "./server/agent-api.js";
 import contentRoutes from "./server/content-routes.js";
+import adminBackup from "./server/admin-backup.js";
+import phpConverter from "./server/php-converter.js";
 import { corsOptions, securityHeaders, sanitizeInput, agentAuth, createRateLimit } from "./server/security.js";
 
 async function startServer() {
@@ -61,6 +63,8 @@ async function startServer() {
   app.use(routes);
   app.use(agentRoutes);
   app.use(contentRoutes);
+  app.use(adminBackup);
+  app.use(phpConverter);
   
   // Serve download page
   app.get('/download', (req, res) => {

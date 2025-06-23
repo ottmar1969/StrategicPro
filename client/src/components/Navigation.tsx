@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Moon, Sun, BarChart3, FileText, User, Home } from "lucide-react";
+import { Moon, Sun, BarChart3, FileText, User, Home, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/contexts/ThemeContext";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,7 @@ export default function Navigation() {
     { path: "/dashboard", label: "Consulting", icon: BarChart3 },
     { path: "/consultation", label: "Get Analysis", icon: FileText },
     { path: "/business-profile", label: "Business Profile", icon: User },
+    { path: "/admin/download", label: "Admin", icon: Shield },
   ];
 
   return (

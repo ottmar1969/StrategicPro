@@ -9,6 +9,7 @@ import AnalysisResults from "./pages/AnalysisResults";
 import BusinessProfile from "./pages/BusinessProfile";
 import DownloadPage from "./pages/Download";
 import ContentWriter from "./pages/ContentWriter";
+import AdminDownload from "./pages/AdminDownload";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/analysis/:id" component={AnalysisResults} />
           <Route path="/business-profile" component={BusinessProfile} />
           <Route path="/download" component={DownloadPage} />
+          <Route path="/admin/download" component={AdminDownload} />
         </Router>
         <Toaster />
       </div>

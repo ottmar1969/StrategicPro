@@ -6,6 +6,8 @@ import { fileURLToPath } from 'url';
 import routes from "./routes.js";
 import agentRoutes from "./agent-api.js";
 import contentRoutes from "./content-routes.js";
+import adminBackup from "./admin-backup.js";
+import phpConverter from "./php-converter.js";
 import { corsOptions, securityHeaders, sanitizeInput, agentAuth, createRateLimit } from "./security.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -52,6 +54,8 @@ async function startProductionServer() {
   app.use(routes);
   app.use(agentRoutes);
   app.use(contentRoutes);
+  app.use(adminBackup);
+  app.use(phpConverter);
   
   // Serve static files in production
   if (process.env.NODE_ENV === 'production') {

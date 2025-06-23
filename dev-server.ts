@@ -1,9 +1,11 @@
 import express from "express";
 import cors from "cors";
 import path from "path";
+import session from "express-session";
 import { createServer as createViteServer } from "vite";
 import routes from "./server/routes.js";
 import agentRoutes from "./server/agent-api.js";
+import contentRoutes from "./server/content-routes.js";
 import { corsOptions, securityHeaders, sanitizeInput, agentAuth, createRateLimit } from "./server/security.js";
 
 async function startServer() {
@@ -33,12 +35,21 @@ async function startServer() {
   app.use('/api/', createRateLimit(15 * 60 * 1000, 100)); // 100 requests per 15 minutes
   app.use('/api/agent/', createRateLimit(5 * 60 * 1000, 50)); // 50 requests per 5 minutes for agents
   
+  // Session middleware for content platform
+  app.use(session({
+    secret: process.env.SESSION_SECRET || 'contentscale-dev-secret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 24 hours
+  }));
+  
   app.use(express.json());
   app.use(vite.ssrFixStacktrace);
   
   // API routes
   app.use(routes);
   app.use(agentRoutes);
+  app.use(contentRoutes);
   
   // Serve download page
   app.get('/download', (req, res) => {

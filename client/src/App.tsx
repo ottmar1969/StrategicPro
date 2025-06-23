@@ -8,6 +8,7 @@ import ConsultationForm from "./pages/ConsultationForm";
 import AnalysisResults from "./pages/AnalysisResults";
 import BusinessProfile from "./pages/BusinessProfile";
 import DownloadPage from "./pages/Download";
+import ContentWriter from "./pages/ContentWriter";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Navigation />
         <Router>
           <Route path="/" component={Home} />
+          <Route path="/content-writer" component={ContentWriter} />
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/consultation" component={ConsultationForm} />
           <Route path="/analysis/:id" component={AnalysisResults} />

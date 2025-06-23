@@ -58,24 +58,22 @@ export default function Home() {
       {/* Hero Section */}
       <section className="gradient-bg text-white py-20">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-5xl font-bold mb-6">
-            Professional Business Consulting
-            <span className="block text-primary-foreground/80">Powered by AI</span>
+          <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+            ContentScale Platform
           </h1>
-          <p className="text-xl mb-8 max-w-3xl mx-auto text-primary-foreground/90">
-            Get expert-level consulting across 12 key business areas including SEO, strategy, finance, 
-            marketing, operations, HR, IT, legal, sales, customer experience, sustainability, and cybersecurity.
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto text-gray-200">
+            AI-powered content generation and professional business consulting in one platform. Create SEO-optimized content and get expert business insights.
           </p>
-          <div className="flex gap-4 justify-center">
-            <Link href="/consultation">
-              <Button size="lg" variant="secondary" className="text-primary">
-                Start Free Consultation
-                <ArrowRight className="ml-2 h-4 w-4" />
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/content-writer">
+              <Button size="lg" className="text-lg px-8 py-6 bg-white text-black hover:bg-gray-100">
+                Start Writing Content
               </Button>
             </Link>
-            <Link href="/dashboard">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-primary">
-                View Dashboard
+            <Link href="/consultation">
+              <Button variant="outline" size="lg" className="text-lg px-8 py-6 border-white text-white hover:bg-white hover:text-black">
+                Get Business Consultation
               </Button>
             </Link>
           </div>
@@ -85,20 +83,47 @@ export default function Home() {
       {/* Features Section */}
       <section className="py-16 bg-muted/50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Why Choose ContentScale?</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Our AI-powered platform delivers professional-grade consulting insights 
-              that would typically cost thousands in consulting fees.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {features.map((feature, index) => (
-              <div key={index} className="flex items-start space-x-3">
-                <CheckCircle className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
-                <span className="text-sm">{feature}</span>
-              </div>
+          <h2 className="text-3xl font-bold text-center mb-12">Dual-Powered Business Solutions</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                icon: <Brain className="h-8 w-8 text-primary" />,
+                title: "AI Content Generation",
+                description: "Create SEO-optimized content with our advanced CRAFT framework. First article free, then $1 with your API key."
+              },
+              {
+                icon: <Users className="h-8 w-8 text-primary" />,
+                title: "Business Consulting",
+                description: "Access 12 specialized consulting areas from SEO to cybersecurity, each with deep industry expertise."
+              },
+              {
+                icon: <TrendingUp className="h-8 w-8 text-primary" />,
+                title: "Fraud Protection",
+                description: "Advanced security with VPN detection, browser fingerprinting, and abuse prevention to protect your business."
+              },
+              {
+                icon: <Shield className="h-8 w-8 text-primary" />,
+                title: "Flexible Pricing",
+                description: "Pay-per-use or credit packages. Bring your own API keys for significant savings and higher limits."
+              },
+              {
+                icon: <CheckCircle className="h-8 w-8 text-primary" />,
+                title: "Fast Results",
+                description: "Generate content and receive business analysis within minutes, not hours or days."
+              },
+              {
+                icon: <ArrowRight className="h-8 w-8 text-primary" />,
+                title: "Complete Platform",
+                description: "Everything you need for content creation and business growth in one integrated solution."
+              }
+            ].map((feature, index) => (
+              <Card key={index} className="text-center">
+                <CardContent className="pt-6">
+                  <div className="flex justify-center mb-4">{feature.icon}</div>
+                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                  <p className="text-muted-foreground">{feature.description}</p>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>

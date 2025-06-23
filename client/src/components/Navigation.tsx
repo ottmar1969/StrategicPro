@@ -10,8 +10,9 @@ export default function Navigation() {
 
   const navItems = [
     { path: "/", label: "Home", icon: Home },
-    { path: "/dashboard", label: "Dashboard", icon: BarChart3 },
-    { path: "/consultation", label: "New Consultation", icon: FileText },
+    { path: "/content-writer", label: "Content Writer", icon: FileText },
+    { path: "/dashboard", label: "Consulting", icon: BarChart3 },
+    { path: "/consultation", label: "Get Analysis", icon: FileText },
     { path: "/business-profile", label: "Business Profile", icon: User },
   ];
 

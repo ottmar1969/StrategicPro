@@ -52,6 +52,150 @@ app.get('/api/admin/download-package', (req, res) => {
   });
 });
 
+// Consultation submission endpoint
+app.post('/api/consultations', (req, res) => {
+  try {
+    const consultationData = req.body;
+    
+    // Validate required fields
+    const requiredFields = ['businessName', 'industry', 'description', 'challenges', 'goals', 'timeline', 'budget', 'email', 'phone'];
+    for (const field of requiredFields) {
+      if (!consultationData[field]) {
+        return res.status(400).json({
+          success: false,
+          error: `Missing required field: ${field}`
+        });
+      }
+    }
+    
+    // Store consultation data
+    const consultation = {
+      id: consultationData.id,
+      category: consultationData.category,
+      businessName: consultationData.businessName,
+      industry: consultationData.industry,
+      description: consultationData.description,
+      challenges: consultationData.challenges,
+      goals: consultationData.goals,
+      timeline: consultationData.timeline,
+      budget: consultationData.budget,
+      email: consultationData.email,
+      phone: consultationData.phone,
+      submittedAt: consultationData.timestamp,
+      status: 'new',
+      forwarded: false
+    };
+    
+    // Store in memory
+    consultationStorage.set(consultation.id, consultation);
+    
+    // Log consultation for O. Francisca
+    console.log('NEW CONSULTATION SUBMISSION:');
+    console.log('============================');
+    console.log('ID:', consultation.id);
+    console.log('Category:', consultation.category);
+    console.log('Business:', consultation.businessName);
+    console.log('Industry:', consultation.industry);
+    console.log('Email:', consultation.email);
+    console.log('Phone:', consultation.phone);
+    console.log('Timeline:', consultation.timeline);
+    console.log('Budget:', consultation.budget);
+    console.log('Description:', consultation.description);
+    console.log('Challenges:', consultation.challenges);
+    console.log('Goals:', consultation.goals);
+    console.log('Submitted:', consultation.submittedAt);
+    console.log('============================');
+    
+    res.json({
+      success: true,
+      data: {
+        id: consultation.id,
+        message: 'Consultation request submitted successfully',
+        contactInfo: {
+          phone: '+31 628073996',
+          email: 'contact@contentscale.site',
+          whatsapp: 'wa.me/31628073996'
+        }
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error processing consultation:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error'
+    });
+  }
+});
+
+// Get consultations endpoint (for admin review)
+app.get('/api/consultations', (req, res) => {
+  const adminKey = req.query.key;
+  if (adminKey !== 'dev-admin-2025') {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  const consultations = Array.from(consultationStorage.values())
+    .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+  
+  res.json({
+    success: true,
+    data: consultations,
+    count: consultations.length
+  });
+});
+
+// Forward consultation to email
+app.post('/api/consultations/:id/forward', (req, res) => {
+  const adminKey = req.query.key;
+  if (adminKey !== 'dev-admin-2025') {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  const { id } = req.params;
+  const { email } = req.body;
+  
+  const consultation = consultationStorage.get(id);
+  if (!consultation) {
+    return res.status(404).json({ error: 'Consultation not found' });
+  }
+  
+  // Mark as forwarded
+  consultation.forwarded = true;
+  consultation.forwardedTo = email;
+  consultation.forwardedAt = new Date().toISOString();
+  consultationStorage.set(id, consultation);
+  
+  res.json({
+    success: true,
+    message: `Consultation forwarded to ${email}`,
+    data: consultation
+  });
+});
+
+// Delete consultation
+app.delete('/api/consultations/:id', (req, res) => {
+  const adminKey = req.query.key;
+  if (adminKey !== 'dev-admin-2025') {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  const { id } = req.params;
+  
+  if (consultationStorage.has(id)) {
+    consultationStorage.delete(id);
+    res.json({
+      success: true,
+      message: 'Consultation deleted successfully'
+    });
+  } else {
+    res.status(404).json({
+      success: false,
+      error: 'Consultation not found'
+    });
+  }
+});
+
 // Backup endpoints redirecting to backup servers
 app.get('/backup/:type', (req, res) => {
   const adminKey = req.query.key;
@@ -905,6 +1049,39 @@ app.get('*', (req, res) => {
                             <div id="admin-panel">
                                 <h2 class="text-2xl font-bold mb-6">Admin Panel - ContentScale Platform</h2>
                                 
+                                <!-- Email Management System -->
+                                <div class="mb-8">
+                                    <h3 class="text-lg font-semibold mb-4">📧 Consultation Email Management</h3>
+                                    <div class="bg-white border border-gray-200 rounded-lg p-6">
+                                        <div class="flex justify-between items-center mb-4">
+                                            <h4 class="font-semibold">Received Consultations</h4>
+                                            <button onclick="refreshConsultations()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+                                                Refresh
+                                            </button>
+                                        </div>
+                                        
+                                        <div id="consultation-list" class="space-y-4">
+                                            <p class="text-gray-500 text-center py-8">Click Refresh to load consultations</p>
+                                        </div>
+                                        
+                                        <!-- Email Configuration -->
+                                        <div class="mt-6 pt-6 border-t border-gray-200">
+                                            <h5 class="font-semibold mb-3">Email Configuration</h5>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700 mb-2">Forward to Email:</label>
+                                                    <input type="email" id="forward-email" class="w-full p-2 border border-gray-300 rounded" placeholder="your@gmail.com" value="o.francisca@contentscale.site">
+                                                </div>
+                                                <div class="flex items-end">
+                                                    <button onclick="setDefaultEmail()" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition-colors">
+                                                        Set as Default
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
                                 <div class="mb-8">
                                     <h3 class="text-lg font-semibold mb-4">📦 Backup Downloads (Starting with "01")</h3>
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -1287,11 +1464,57 @@ app.get('*', (req, res) => {
             const formData = new FormData(event.target);
             const data = Object.fromEntries(formData.entries());
             
-            // Show success message
-            alert('Consultation request submitted successfully! O. Francisca will contact you within 24 hours at: +31 628073996');
+            // Add category and timestamp
+            data.category = category;
+            data.timestamp = new Date().toISOString();
+            data.id = 'consultation_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
             
-            // Reset form
-            event.target.reset();
+            // Show loading state
+            const submitButton = event.target.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Submitting...';
+            submitButton.disabled = true;
+            
+            // Send data to server
+            fetch('/api/consultations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('Consultation request submitted successfully!\\n\\nYour consultation ID: ' + data.id + '\\n\\nO. Francisca will contact you within 24 hours at:\\n📞 +31 628073996\\n📧 contact@contentscale.site\\n\\nWhatsApp: wa.me/31628073996');
+                    
+                    // Store submission locally for user reference
+                    const submissions = JSON.parse(localStorage.getItem('consultationSubmissions') || '[]');
+                    submissions.push({
+                        id: data.id,
+                        category: category,
+                        businessName: data.businessName,
+                        email: data.email,
+                        submittedAt: data.timestamp,
+                        status: 'pending'
+                    });
+                    localStorage.setItem('consultationSubmissions', JSON.stringify(submissions));
+                    
+                    // Reset form
+                    event.target.reset();
+                } else {
+                    alert('Error submitting consultation request. Please try again or contact O. Francisca directly at +31 628073996');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error submitting consultation request. Please try again or contact O. Francisca directly at +31 628073996');
+            })
+            .finally(() => {
+                // Restore button state
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            });
         }
         
         function acceptCookies() {
@@ -1705,6 +1928,220 @@ app.get('*', (req, res) => {
         
         function generateContent() {
             alert('Content generation feature requires API integration. Contact O. Francisca at +31 628073996 for setup and pricing information.');
+        }
+        
+        function refreshConsultations() {
+            const adminKey = prompt('Enter admin password:');
+            if (adminKey !== 'dev-admin-2025') {
+                alert('Invalid admin password!');
+                return;
+            }
+            
+            fetch(\`/api/consultations?key=\${adminKey}\`)
+                .then(response => response.json())
+                .then(data => {
+                    const listDiv = document.getElementById('consultation-list');
+                    
+                    if (data.data && data.data.length > 0) {
+                        listDiv.innerHTML = data.data.map(consultation => \`
+                            <div class="border border-gray-200 rounded-lg p-4 \${consultation.forwarded ? 'bg-green-50' : 'bg-white'}">
+                                <div class="flex justify-between items-start mb-3">
+                                    <div>
+                                        <h5 class="font-semibold">\${consultation.businessName}</h5>
+                                        <p class="text-sm text-gray-600">\${consultation.category} • \${consultation.industry}</p>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        \${!consultation.forwarded ? \`
+                                            <button onclick="forwardConsultation('\${consultation.id}')" class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
+                                                Forward to Email
+                                            </button>
+                                        \` : \`
+                                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Forwarded</span>
+                                        \`}
+                                        <button onclick="viewConsultation('\${consultation.id}')" class="bg-gray-600 text-white px-3 py-1 rounded text-sm hover:bg-gray-700">
+                                            View
+                                        </button>
+                                        <button onclick="deleteConsultation('\${consultation.id}')" class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                                    <p><strong>Email:</strong> \${consultation.email}</p>
+                                    <p><strong>Phone:</strong> \${consultation.phone}</p>
+                                    <p><strong>Timeline:</strong> \${consultation.timeline}</p>
+                                    <p><strong>Budget:</strong> \${consultation.budget}</p>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">Submitted: \${new Date(consultation.submittedAt).toLocaleString()}</p>
+                                \${consultation.forwarded ? \`<p class="text-xs text-green-600 mt-1">Forwarded to: \${consultation.forwardedTo} at \${new Date(consultation.forwardedAt).toLocaleString()}</p>\` : ''}
+                            </div>
+                        \`).join('');
+                    } else {
+                        listDiv.innerHTML = '<p class="text-gray-500 text-center py-8">No consultations received yet</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error loading consultations');
+                });
+        }
+        
+        function forwardConsultation(id) {
+            const email = document.getElementById('forward-email').value;
+            if (!email) {
+                alert('Please enter an email address');
+                return;
+            }
+            
+            const adminKey = prompt('Enter admin password:');
+            if (adminKey !== 'dev-admin-2025') {
+                alert('Invalid admin password!');
+                return;
+            }
+            
+            fetch(\`/api/consultations/\${id}/forward?key=\${adminKey}\`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: email })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Create Gmail compose URL
+                    const consultation = data.data;
+                    const subject = encodeURIComponent(\`New Consultation Request: \${consultation.businessName}\`);
+                    const body = encodeURIComponent(\`
+CONSULTATION REQUEST DETAILS
+============================
+
+Business Information:
+- Business Name: \${consultation.businessName}
+- Industry: \${consultation.industry}
+- Category: \${consultation.category}
+
+Contact Information:
+- Email: \${consultation.email}
+- Phone: \${consultation.phone}
+
+Project Details:
+- Timeline: \${consultation.timeline}
+- Budget: \${consultation.budget}
+
+Description:
+\${consultation.description}
+
+Specific Challenges:
+\${consultation.challenges}
+
+Goals:
+\${consultation.goals}
+
+Submitted: \${new Date(consultation.submittedAt).toLocaleString()}
+Consultation ID: \${consultation.id}
+
+---
+ContentScale Platform
+Contact: O. Francisca (+31 628073996)
+                    \`);
+                    
+                    const gmailUrl = \`https://mail.google.com/mail/?view=cm&fs=1&to=\${email}&su=\${subject}&body=\${body}\`;
+                    
+                    alert(\`Consultation marked as forwarded to \${email}. Opening Gmail to send...\`);
+                    window.open(gmailUrl, '_blank');
+                    
+                    refreshConsultations();
+                } else {
+                    alert('Error forwarding consultation');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error forwarding consultation');
+            });
+        }
+        
+        function viewConsultation(id) {
+            fetch(\`/api/consultations?key=dev-admin-2025\`)
+                .then(response => response.json())
+                .then(data => {
+                    const consultation = data.data.find(c => c.id === id);
+                    if (consultation) {
+                        const details = \`
+CONSULTATION DETAILS
+====================
+ID: \${consultation.id}
+Business: \${consultation.businessName}
+Industry: \${consultation.industry}
+Category: \${consultation.category}
+
+Contact Information:
+Email: \${consultation.email}
+Phone: \${consultation.phone}
+
+Project Details:
+Timeline: \${consultation.timeline}
+Budget: \${consultation.budget}
+
+Description:
+\${consultation.description}
+
+Challenges:
+\${consultation.challenges}
+
+Goals:
+\${consultation.goals}
+
+Submitted: \${new Date(consultation.submittedAt).toLocaleString()}
+Status: \${consultation.forwarded ? 'Forwarded to ' + consultation.forwardedTo : 'Pending'}
+                        \`;
+                        alert(details);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error loading consultation details');
+                });
+        }
+        
+        function deleteConsultation(id) {
+            if (!confirm('Are you sure you want to delete this consultation? This action cannot be undone.')) {
+                return;
+            }
+            
+            const adminKey = prompt('Enter admin password:');
+            if (adminKey !== 'dev-admin-2025') {
+                alert('Invalid admin password!');
+                return;
+            }
+            
+            fetch(\`/api/consultations/\${id}?key=\${adminKey}\`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Consultation deleted successfully');
+                    refreshConsultations();
+                } else {
+                    alert('Error deleting consultation');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error deleting consultation');
+            });
+        }
+        
+        function setDefaultEmail() {
+            const email = document.getElementById('forward-email').value;
+            if (email) {
+                localStorage.setItem('default-forward-email', email);
+                alert(\`Default email set to: \${email}\`);
+            } else {
+                alert('Please enter an email address');
+            }
         }
         
         // Handle navigation

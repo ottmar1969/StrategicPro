@@ -129,13 +129,35 @@ app.use((req, res) => {
 const port = parseInt(process.env.PORT || '5173', 10);
 const host = '0.0.0.0';
 
+// Graceful shutdown handling
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully');
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('SIGINT received, shutting down gracefully');
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
+});
+
 const server = app.listen(port, host, () => {
-  console.log(`ContentScale running on http://${host}:${port}`);
-  console.log(`Health check: http://${host}:${port}/`);
-  console.log(`API status: http://${host}:${port}/api/agent/status`);
-  console.log('Deployment ready for Replit');
+  console.log(`🚀 ContentScale Platform deployed successfully`);
+  console.log(`📍 Server running on http://${host}:${port}`);
+  console.log(`✅ Health check: http://${host}:${port}/`);
+  console.log(`🔌 API status: http://${host}:${port}/api/agent/status`);
+  console.log(`🌐 Environment: ${process.env.NODE_ENV || 'production'}`);
+  console.log(`📦 Ready for deployment health checks`);
 }).on('error', (err) => {
-  console.error('Server failed to start:', err);
+  console.error('❌ Server startup failed:', err);
+  if (err.code === 'EADDRINUSE') {
+    console.error(`Port ${port} is already in use`);
+  }
   process.exit(1);
 });
 

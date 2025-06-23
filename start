@@ -1,0 +1,3 @@
+#!/bin/bash
+# Production start command for Replit deployment
+NODE_ENV=production PORT=${PORT:-5173} tsx server/deploy-server.ts

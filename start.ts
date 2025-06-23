@@ -303,7 +303,7 @@ app.get('*', (req, res) => {
                                     </select>
                                 </div>
                                 
-                                <button class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                                <button onclick="generateContent()" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors">
                                     Generate Content
                                 </button>
                             </div>
@@ -322,40 +322,64 @@ app.get('*', (req, res) => {
             const mainContent = document.getElementById('main-content');
             mainContent.innerHTML = \`
                 <div class="min-h-screen bg-gray-50 py-12">
-                    <div class="max-w-4xl mx-auto px-4">
+                    <div class="max-w-6xl mx-auto px-4">
                         <div class="bg-white rounded-lg shadow-lg p-8">
                             <h1 class="text-3xl font-bold mb-6">Business Consultation</h1>
                             <p class="text-gray-600 mb-8">Get expert advice across 12 specialized business areas.</p>
                             
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 cursor-pointer">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:shadow-lg cursor-pointer transition-all" onclick="selectConsultingArea('seo')">
                                     <h3 class="font-semibold mb-2">SEO Consulting</h3>
                                     <p class="text-gray-600 text-sm">Technical SEO audits and strategy</p>
                                 </div>
-                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 cursor-pointer">
+                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:shadow-lg cursor-pointer transition-all" onclick="selectConsultingArea('business_strategy')">
                                     <h3 class="font-semibold mb-2">Business Strategy</h3>
                                     <p class="text-gray-600 text-sm">Market analysis and growth planning</p>
                                 </div>
-                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 cursor-pointer">
+                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:shadow-lg cursor-pointer transition-all" onclick="selectConsultingArea('financial')">
                                     <h3 class="font-semibold mb-2">Financial Consulting</h3>
                                     <p class="text-gray-600 text-sm">Financial planning and investment</p>
                                 </div>
-                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 cursor-pointer">
+                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:shadow-lg cursor-pointer transition-all" onclick="selectConsultingArea('marketing')">
                                     <h3 class="font-semibold mb-2">Marketing Strategy</h3>
                                     <p class="text-gray-600 text-sm">Digital marketing and branding</p>
                                 </div>
-                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 cursor-pointer">
+                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:shadow-lg cursor-pointer transition-all" onclick="selectConsultingArea('operations')">
                                     <h3 class="font-semibold mb-2">Operations</h3>
                                     <p class="text-gray-600 text-sm">Process optimization</p>
                                 </div>
-                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 cursor-pointer">
+                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:shadow-lg cursor-pointer transition-all" onclick="selectConsultingArea('cybersecurity')">
                                     <h3 class="font-semibold mb-2">Cybersecurity</h3>
                                     <p class="text-gray-600 text-sm">Security assessment and protection</p>
+                                </div>
+                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:shadow-lg cursor-pointer transition-all" onclick="selectConsultingArea('hr')">
+                                    <h3 class="font-semibold mb-2">HR Consulting</h3>
+                                    <p class="text-gray-600 text-sm">Human resources and talent management</p>
+                                </div>
+                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:shadow-lg cursor-pointer transition-all" onclick="selectConsultingArea('it')">
+                                    <h3 class="font-semibold mb-2">IT Consulting</h3>
+                                    <p class="text-gray-600 text-sm">Technology infrastructure and solutions</p>
+                                </div>
+                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:shadow-lg cursor-pointer transition-all" onclick="selectConsultingArea('legal')">
+                                    <h3 class="font-semibold mb-2">Legal Consulting</h3>
+                                    <p class="text-gray-600 text-sm">Legal compliance and risk management</p>
+                                </div>
+                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:shadow-lg cursor-pointer transition-all" onclick="selectConsultingArea('sales')">
+                                    <h3 class="font-semibold mb-2">Sales Consulting</h3>
+                                    <p class="text-gray-600 text-sm">Sales strategy and performance optimization</p>
+                                </div>
+                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:shadow-lg cursor-pointer transition-all" onclick="selectConsultingArea('customer_experience')">
+                                    <h3 class="font-semibold mb-2">Customer Experience</h3>
+                                    <p class="text-gray-600 text-sm">Customer journey and satisfaction</p>
+                                </div>
+                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:shadow-lg cursor-pointer transition-all" onclick="selectConsultingArea('sustainability')">
+                                    <h3 class="font-semibold mb-2">Sustainability</h3>
+                                    <p class="text-gray-600 text-sm">Environmental and social responsibility</p>
                                 </div>
                             </div>
                             
                             <div class="mt-8 text-center">
-                                <button class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                                <button onclick="startGeneralConsultation()" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors">
                                     Start Free Consultation
                                 </button>
                                 <p class="text-gray-600 text-sm mt-2">Contact O. Francisca: +31 628073996</p>
@@ -630,6 +654,129 @@ app.get('*', (req, res) => {
             \`;
         }
         
+        function selectConsultingArea(area) {
+            const mainContent = document.getElementById('main-content');
+            const areaNames = {
+                'seo': 'SEO Consulting',
+                'business_strategy': 'Business Strategy',
+                'financial': 'Financial Consulting',
+                'marketing': 'Marketing Strategy',
+                'operations': 'Operations Consulting',
+                'cybersecurity': 'Cybersecurity Consulting',
+                'hr': 'HR Consulting',
+                'it': 'IT Consulting',
+                'legal': 'Legal Consulting',
+                'sales': 'Sales Consulting',
+                'customer_experience': 'Customer Experience',
+                'sustainability': 'Sustainability Consulting'
+            };
+            
+            mainContent.innerHTML = \`
+                <div class="min-h-screen bg-gray-50 py-12">
+                    <div class="max-w-4xl mx-auto px-4">
+                        <div class="bg-white rounded-lg shadow-lg p-8">
+                            <div class="mb-6">
+                                <button onclick="showConsultation()" class="text-blue-600 hover:underline mb-4">← Back to All Categories</button>
+                                <h1 class="text-3xl font-bold mb-2">\${areaNames[area]}</h1>
+                                <p class="text-gray-600">Request expert consultation in this specialized area</p>
+                            </div>
+                            
+                            <form class="space-y-6" onsubmit="submitConsultationRequest(event, '\${area}')">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Business Name</label>
+                                    <input type="text" name="businessName" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Enter your business name" required>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Industry</label>
+                                    <select name="industry" class="w-full p-3 border border-gray-300 rounded-lg" required>
+                                        <option value="">Select your industry</option>
+                                        <option value="technology">Technology</option>
+                                        <option value="healthcare">Healthcare</option>
+                                        <option value="finance">Finance</option>
+                                        <option value="retail">Retail</option>
+                                        <option value="manufacturing">Manufacturing</option>
+                                        <option value="education">Education</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Business Description</label>
+                                    <textarea name="description" rows="4" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Describe your business and current situation" required></textarea>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Specific Challenges</label>
+                                    <textarea name="challenges" rows="3" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="What specific challenges are you facing?" required></textarea>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Your Goals</label>
+                                    <textarea name="goals" rows="3" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="What do you hope to achieve?" required></textarea>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Timeline</label>
+                                        <select name="timeline" class="w-full p-3 border border-gray-300 rounded-lg" required>
+                                            <option value="">Select timeline</option>
+                                            <option value="immediate">Immediate (1-2 weeks)</option>
+                                            <option value="short">Short-term (1-3 months)</option>
+                                            <option value="medium">Medium-term (3-6 months)</option>
+                                            <option value="long">Long-term (6+ months)</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Budget Range</label>
+                                        <select name="budget" class="w-full p-3 border border-gray-300 rounded-lg" required>
+                                            <option value="">Select budget</option>
+                                            <option value="small">€500 - €2,000</option>
+                                            <option value="medium">€2,000 - €5,000</option>
+                                            <option value="large">€5,000 - €10,000</option>
+                                            <option value="enterprise">€10,000+</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Contact Information</label>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <input type="email" name="email" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Your email address" required>
+                                        <input type="tel" name="phone" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Your phone number" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-center">
+                                    <button type="submit" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                                        Submit Consultation Request
+                                    </button>
+                                    <p class="text-gray-600 text-sm mt-2">O. Francisca will contact you within 24 hours</p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            \`;
+        }
+        
+        function startGeneralConsultation() {
+            selectConsultingArea('business_strategy');
+        }
+        
+        function submitConsultationRequest(event, category) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Show success message
+            alert('Consultation request submitted successfully! O. Francisca will contact you within 24 hours at: +31 628073996');
+            
+            // Reset form
+            event.target.reset();
+        }
+        
         function acceptCookies() {
             localStorage.setItem('cookies-accepted', 'true');
             document.getElementById('cookie-banner').style.display = 'none';
@@ -638,6 +785,10 @@ app.get('*', (req, res) => {
         function showCookieSettings() {
             navigateTo('/cookies');
             acceptCookies();
+        }
+        
+        function generateContent() {
+            alert('Content generation feature requires API integration. Contact O. Francisca at +31 628073996 for setup and pricing information.');
         }
         
         // Handle navigation

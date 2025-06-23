@@ -166,15 +166,71 @@ app.get('*', (req, res) => {
                             Join thousands of businesses that have already benefited from our AI-powered consulting platform.
                         </p>
                         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                            <a href="/consultation" class="bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                            <a href="/consultation" onclick="navigateTo('/consultation')" class="bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
                                 Start Your Free Consultation
                             </a>
                             <p class="text-sm text-gray-600">
-                                Contact: consultant@contentscale.site
+                                Contact: O. Francisca • +31 628073996
                             </p>
                         </div>
                     </div>
                 </div>
+            </div>
+            
+            <!-- Footer -->
+            <footer class="bg-gray-900 text-white py-12">
+                <div class="max-w-7xl mx-auto px-4">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                        <div class="md:col-span-2">
+                            <h3 class="text-xl font-bold mb-4">ContentScale Platform</h3>
+                            <p class="text-gray-300 mb-4">AI-powered content generation and professional business consulting in one platform.</p>
+                            <div class="flex items-center space-x-2">
+                                <a href="https://wa.me/31628073996" target="_blank" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.785"/>
+                                    </svg>
+                                    <span>WhatsApp</span>
+                                </a>
+                            </div>
+                            <p class="text-gray-400 text-sm mt-2">+31 628073996</p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-lg font-semibold mb-4">Services</h4>
+                            <ul class="space-y-2 text-gray-300">
+                                <li><a href="/content-writer" onclick="navigateTo('/content-writer')" class="hover:text-white">Content Writer</a></li>
+                                <li><a href="/consultation" onclick="navigateTo('/consultation')" class="hover:text-white">Business Consulting</a></li>
+                                <li><a href="/admin/download" onclick="navigateTo('/admin/download')" class="hover:text-white">Admin Portal</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-lg font-semibold mb-4">Legal</h4>
+                            <ul class="space-y-2 text-gray-300">
+                                <li><a href="/privacy" onclick="navigateTo('/privacy')" class="hover:text-white">Privacy Policy</a></li>
+                                <li><a href="/terms" onclick="navigateTo('/terms')" class="hover:text-white">Terms of Service</a></li>
+                                <li><a href="/cookies" onclick="navigateTo('/cookies')" class="hover:text-white">Cookie Policy</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                        <p>&copy; 2025 ContentScale Platform. All rights reserved. | Contact: O. Francisca | +31 628073996</p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 bg-gray-900 text-white p-4 z-50" style="display: none;">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between">
+            <div class="mb-4 sm:mb-0">
+                <p class="text-sm">We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.</p>
+            </div>
+            <div class="flex space-x-4">
+                <button onclick="acceptCookies()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm">Accept</button>
+                <button onclick="showCookieSettings()" class="border border-gray-500 hover:border-white text-white px-4 py-2 rounded text-sm">Settings</button>
             </div>
         </div>
     </div>
@@ -202,7 +258,112 @@ app.get('*', (req, res) => {
                         </div>
                     </div>
                 \`;
+            } else if (path === '/content-writer') {
+                showContentWriter();
+            } else if (path === '/consultation') {
+                showConsultation();
+            } else if (path === '/privacy') {
+                showPrivacyPolicy();
+            } else if (path === '/terms') {
+                showTermsOfService();
+            } else if (path === '/cookies') {
+                showCookiePolicy();
+            } else {
+                showHomePage();
             }
+        }
+        
+        function showContentWriter() {
+            const mainContent = document.getElementById('main-content');
+            mainContent.innerHTML = \`
+                <div class="min-h-screen bg-gray-50 py-12">
+                    <div class="max-w-4xl mx-auto px-4">
+                        <div class="bg-white rounded-lg shadow-lg p-8">
+                            <h1 class="text-3xl font-bold mb-6">AI Content Writer</h1>
+                            <p class="text-gray-600 mb-8">Create SEO-optimized content with our advanced CRAFT framework.</p>
+                            
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Content Topic</label>
+                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Enter your content topic">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Target Keywords</label>
+                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Enter target keywords (comma separated)">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Content Type</label>
+                                    <select class="w-full p-3 border border-gray-300 rounded-lg">
+                                        <option>Blog Post</option>
+                                        <option>Product Description</option>
+                                        <option>Landing Page</option>
+                                        <option>Social Media</option>
+                                    </select>
+                                </div>
+                                
+                                <button class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                                    Generate Content
+                                </button>
+                            </div>
+                            
+                            <div class="mt-8 p-4 bg-blue-50 rounded-lg">
+                                <p class="text-blue-800 font-semibold">First article free • $1 with your API key</p>
+                                <p class="text-blue-600 text-sm">Contact: +31 628073996 for enterprise pricing</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            \`;
+        }
+        
+        function showConsultation() {
+            const mainContent = document.getElementById('main-content');
+            mainContent.innerHTML = \`
+                <div class="min-h-screen bg-gray-50 py-12">
+                    <div class="max-w-4xl mx-auto px-4">
+                        <div class="bg-white rounded-lg shadow-lg p-8">
+                            <h1 class="text-3xl font-bold mb-6">Business Consultation</h1>
+                            <p class="text-gray-600 mb-8">Get expert advice across 12 specialized business areas.</p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 cursor-pointer">
+                                    <h3 class="font-semibold mb-2">SEO Consulting</h3>
+                                    <p class="text-gray-600 text-sm">Technical SEO audits and strategy</p>
+                                </div>
+                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 cursor-pointer">
+                                    <h3 class="font-semibold mb-2">Business Strategy</h3>
+                                    <p class="text-gray-600 text-sm">Market analysis and growth planning</p>
+                                </div>
+                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 cursor-pointer">
+                                    <h3 class="font-semibold mb-2">Financial Consulting</h3>
+                                    <p class="text-gray-600 text-sm">Financial planning and investment</p>
+                                </div>
+                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 cursor-pointer">
+                                    <h3 class="font-semibold mb-2">Marketing Strategy</h3>
+                                    <p class="text-gray-600 text-sm">Digital marketing and branding</p>
+                                </div>
+                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 cursor-pointer">
+                                    <h3 class="font-semibold mb-2">Operations</h3>
+                                    <p class="text-gray-600 text-sm">Process optimization</p>
+                                </div>
+                                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 cursor-pointer">
+                                    <h3 class="font-semibold mb-2">Cybersecurity</h3>
+                                    <p class="text-gray-600 text-sm">Security assessment and protection</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-8 text-center">
+                                <button class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                                    Start Free Consultation
+                                </button>
+                                <p class="text-gray-600 text-sm mt-2">Contact O. Francisca: +31 628073996</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            \`;
         }
         
         function authenticate(event) {
@@ -254,20 +415,246 @@ app.get('*', (req, res) => {
             \`;
         }
         
+        function showPrivacyPolicy() {
+            const mainContent = document.getElementById('main-content');
+            mainContent.innerHTML = \`
+                <div class="min-h-screen bg-gray-50 py-12">
+                    <div class="max-w-4xl mx-auto px-4">
+                        <div class="bg-white rounded-lg shadow-lg p-8">
+                            <h1 class="text-3xl font-bold mb-6">Privacy Policy</h1>
+                            <div class="prose max-w-none">
+                                <p class="text-gray-600 mb-4">Last updated: June 23, 2025</p>
+                                
+                                <h2 class="text-xl font-semibold mt-6 mb-3">1. Information We Collect</h2>
+                                <p class="mb-4">We collect information you provide directly to us, such as when you create an account, use our services, or contact us for support.</p>
+                                
+                                <h2 class="text-xl font-semibold mt-6 mb-3">2. How We Use Your Information</h2>
+                                <p class="mb-4">We use the information we collect to provide, maintain, and improve our services, process transactions, and communicate with you.</p>
+                                
+                                <h2 class="text-xl font-semibold mt-6 mb-3">3. Information Sharing</h2>
+                                <p class="mb-4">We do not sell, trade, or rent your personal information to third parties. We may share your information in certain limited circumstances as outlined in this policy.</p>
+                                
+                                <h2 class="text-xl font-semibold mt-6 mb-3">4. Data Security</h2>
+                                <p class="mb-4">We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.</p>
+                                
+                                <h2 class="text-xl font-semibold mt-6 mb-3">5. Your Rights</h2>
+                                <p class="mb-4">Under GDPR, you have the right to access, rectify, erase, restrict processing, and port your personal data. You also have the right to object to processing and withdraw consent.</p>
+                                
+                                <h2 class="text-xl font-semibold mt-6 mb-3">6. Contact Information</h2>
+                                <p class="mb-4">For any privacy-related questions or requests, please contact:</p>
+                                <p class="mb-2"><strong>O. Francisca</strong></p>
+                                <p class="mb-2">Phone/WhatsApp: +31 628073996</p>
+                                <p class="mb-4">Email: consultant@contentscale.site</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            \`;
+        }
+        
+        function showTermsOfService() {
+            const mainContent = document.getElementById('main-content');
+            mainContent.innerHTML = \`
+                <div class="min-h-screen bg-gray-50 py-12">
+                    <div class="max-w-4xl mx-auto px-4">
+                        <div class="bg-white rounded-lg shadow-lg p-8">
+                            <h1 class="text-3xl font-bold mb-6">Terms of Service</h1>
+                            <div class="prose max-w-none">
+                                <p class="text-gray-600 mb-4">Last updated: June 23, 2025</p>
+                                
+                                <h2 class="text-xl font-semibold mt-6 mb-3">1. Acceptance of Terms</h2>
+                                <p class="mb-4">By accessing and using ContentScale Platform, you accept and agree to be bound by the terms and provision of this agreement.</p>
+                                
+                                <h2 class="text-xl font-semibold mt-6 mb-3">2. Use License</h2>
+                                <p class="mb-4">Permission is granted to use our services for personal and commercial purposes under the terms specified in your service agreement.</p>
+                                
+                                <h2 class="text-xl font-semibold mt-6 mb-3">3. Service Description</h2>
+                                <p class="mb-4">ContentScale Platform provides AI-powered content generation and business consulting services. Services are provided "as is" without warranty of any kind.</p>
+                                
+                                <h2 class="text-xl font-semibold mt-6 mb-3">4. Payment Terms</h2>
+                                <p class="mb-4">Pricing is as displayed on our platform. First article is free, subsequent content generation requires payment or API key integration.</p>
+                                
+                                <h2 class="text-xl font-semibold mt-6 mb-3">5. Limitation of Liability</h2>
+                                <p class="mb-4">In no event shall ContentScale Platform or its suppliers be liable for any damages arising out of the use or inability to use our services.</p>
+                                
+                                <h2 class="text-xl font-semibold mt-6 mb-3">6. Contact Information</h2>
+                                <p class="mb-4">For questions about these Terms of Service, please contact:</p>
+                                <p class="mb-2"><strong>O. Francisca</strong></p>
+                                <p class="mb-2">Phone/WhatsApp: +31 628073996</p>
+                                <p class="mb-4">Email: consultant@contentscale.site</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            \`;
+        }
+        
+        function showCookiePolicy() {
+            const mainContent = document.getElementById('main-content');
+            mainContent.innerHTML = \`
+                <div class="min-h-screen bg-gray-50 py-12">
+                    <div class="max-w-4xl mx-auto px-4">
+                        <div class="bg-white rounded-lg shadow-lg p-8">
+                            <h1 class="text-3xl font-bold mb-6">Cookie Policy</h1>
+                            <div class="prose max-w-none">
+                                <p class="text-gray-600 mb-4">Last updated: June 23, 2025</p>
+                                
+                                <h2 class="text-xl font-semibold mt-6 mb-3">1. What Are Cookies</h2>
+                                <p class="mb-4">Cookies are small text files that are placed on your computer or mobile device when you visit our website. They help us provide you with a better experience.</p>
+                                
+                                <h2 class="text-xl font-semibold mt-6 mb-3">2. Types of Cookies We Use</h2>
+                                <ul class="list-disc pl-6 mb-4">
+                                    <li><strong>Essential Cookies:</strong> Required for the website to function properly</li>
+                                    <li><strong>Analytics Cookies:</strong> Help us understand how visitors use our website</li>
+                                    <li><strong>Functional Cookies:</strong> Remember your preferences and settings</li>
+                                </ul>
+                                
+                                <h2 class="text-xl font-semibold mt-6 mb-3">3. Managing Cookies</h2>
+                                <p class="mb-4">You can control and manage cookies in various ways. Most browsers allow you to refuse cookies or delete existing cookies.</p>
+                                
+                                <h2 class="text-xl font-semibold mt-6 mb-3">4. Third-Party Cookies</h2>
+                                <p class="mb-4">Some cookies are placed by third-party services that appear on our pages, such as analytics providers.</p>
+                                
+                                <h2 class="text-xl font-semibold mt-6 mb-3">5. Contact Information</h2>
+                                <p class="mb-4">For questions about our use of cookies, please contact:</p>
+                                <p class="mb-2"><strong>O. Francisca</strong></p>
+                                <p class="mb-2">Phone/WhatsApp: +31 628073996</p>
+                                <p class="mb-4">Email: consultant@contentscale.site</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            \`;
+        }
+        
+        function navigateTo(path) {
+            history.pushState(null, '', path);
+            handleRoute();
+        }
+        
         function showHomePage() {
-            window.location.href = '/';
+            const mainContent = document.getElementById('main-content');
+            mainContent.innerHTML = getHomePageContent();
+        }
+        
+        function getHomePageContent() {
+            return \`
+                <!-- Landing Page Content -->
+                <div class="gradient-bg text-white py-20">
+                    <div class="max-w-7xl mx-auto px-4 text-center">
+                        <h1 class="text-4xl md:text-6xl font-bold mb-4">ContentScale Platform</h1>
+                        <p class="text-xl mb-8 max-w-2xl mx-auto text-gray-200">
+                            AI-powered content generation and professional business consulting in one platform. 
+                            Create SEO-optimized content and get expert business insights.
+                        </p>
+                        
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <a href="/content-writer" onclick="navigateTo('/content-writer')" class="bg-white text-black px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                                Start Writing Content
+                            </a>
+                            <a href="/consultation" onclick="navigateTo('/consultation')" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-black transition-colors">
+                                Get Business Consultation
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Features Section -->
+                <div class="py-16 bg-gray-100">
+                    <div class="max-w-7xl mx-auto px-4">
+                        <h2 class="text-3xl font-bold text-center mb-12">Dual-Powered Business Solutions</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div class="bg-white p-6 rounded-lg shadow text-center">
+                                <h3 class="text-xl font-semibold mb-2">AI Content Generation</h3>
+                                <p class="text-gray-600">Create SEO-optimized content with our advanced CRAFT framework. First article free, then $1 with your API key.</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow text-center">
+                                <h3 class="text-xl font-semibold mb-2">Business Consulting</h3>
+                                <p class="text-gray-600">Access 12 specialized consulting areas from SEO to cybersecurity, each with deep industry expertise.</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow text-center">
+                                <h3 class="text-xl font-semibold mb-2">Fraud Protection</h3>
+                                <p class="text-gray-600">Advanced security with VPN detection, browser fingerprinting, and abuse prevention to protect your business.</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow text-center">
+                                <h3 class="text-xl font-semibold mb-2">Flexible Pricing</h3>
+                                <p class="text-gray-600">Pay-per-use or credit packages. Bring your own API keys for significant savings and higher limits.</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow text-center">
+                                <h3 class="text-xl font-semibold mb-2">Fast Results</h3>
+                                <p class="text-gray-600">Generate content and receive business analysis within minutes, not hours or days.</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow text-center">
+                                <h3 class="text-xl font-semibold mb-2">Complete Platform</h3>
+                                <p class="text-gray-600">Everything you need for content creation and business growth in one integrated solution.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Access Note -->
+                <div class="py-16">
+                    <div class="max-w-7xl mx-auto px-4 text-center">
+                        <div class="bg-blue-50 p-8 rounded-lg">
+                            <h2 class="text-3xl font-bold mb-4">Admin Download Access</h2>
+                            <p class="text-lg text-gray-700 mb-6">
+                                Administrative features including complete platform downloads are password protected.
+                            </p>
+                            <a href="/admin/download" onclick="navigateTo('/admin/download')" class="bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                                Access Admin Panel
+                            </a>
+                            <p class="text-sm text-gray-500 mt-4">
+                                Password required for security
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Section -->
+                <div class="py-16 bg-gray-100">
+                    <div class="max-w-7xl mx-auto px-4 text-center">
+                        <h2 class="text-3xl font-bold mb-4">Ready to Transform Your Business?</h2>
+                        <p class="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
+                            Join thousands of businesses that have already benefited from our AI-powered consulting platform.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                            <a href="/consultation" onclick="navigateTo('/consultation')" class="bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                                Start Your Free Consultation
+                            </a>
+                            <p class="text-sm text-gray-600">
+                                Contact: O. Francisca • +31 628073996
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            \`;
+        }
+        
+        function acceptCookies() {
+            localStorage.setItem('cookies-accepted', 'true');
+            document.getElementById('cookie-banner').style.display = 'none';
+        }
+        
+        function showCookieSettings() {
+            navigateTo('/cookies');
+            acceptCookies();
         }
         
         // Handle navigation
         window.addEventListener('popstate', handleRoute);
-        document.addEventListener('DOMContentLoaded', handleRoute);
+        document.addEventListener('DOMContentLoaded', function() {
+            handleRoute();
+            
+            // Show cookie banner if not accepted
+            if (!localStorage.getItem('cookies-accepted')) {
+                document.getElementById('cookie-banner').style.display = 'block';
+            }
+        });
         
         // Handle navigation clicks
         document.addEventListener('click', function(e) {
-            if (e.target.tagName === 'A' && e.target.getAttribute('href') === '/admin/download') {
+            if (e.target.tagName === 'A' && e.target.getAttribute('onclick')) {
                 e.preventDefault();
-                history.pushState(null, '', '/admin/download');
-                handleRoute();
             }
         });
     </script>

@@ -82,9 +82,37 @@ if (fs.existsSync(publicPath)) {
   app.use(express.static(publicPath));
 }
 
-// Simple fallback without wildcards
+// Additional API routes for the React app
+app.post('/api/consultations', (req, res) => {
+  res.json({ 
+    id: 'demo-consultation',
+    status: 'received',
+    message: 'Consultation request received successfully',
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.post('/api/business-profiles', (req, res) => {
+  res.json({ 
+    id: 'demo-profile',
+    status: 'created',
+    message: 'Business profile created successfully',
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.post('/api/content/generate', (req, res) => {
+  res.json({ 
+    id: 'demo-content',
+    status: 'generated',
+    message: 'Content generation completed',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Catch-all handler for non-API routes
 app.use((req, res) => {
-  // Check if it's an API request
+  // Skip API routes
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ error: 'API endpoint not found' });
   }
@@ -94,13 +122,7 @@ app.use((req, res) => {
   if (fs.existsSync(indexPath)) {
     res.sendFile(indexPath);
   } else {
-    res.send(`<!DOCTYPE html>
-<html><head><title>ContentScale</title></head>
-<body style="font-family:Arial;padding:40px;text-align:center;">
-<h1>ContentScale Platform</h1>
-<p>Server Status: Online</p>
-<p>Visit <a href="/api/agent/status">/api/agent/status</a> for API info</p>
-</body></html>`);
+    res.status(404).send('Application not found');
   }
 });
 

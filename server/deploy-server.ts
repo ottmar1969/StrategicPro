@@ -3,11 +3,33 @@ import cors from "cors";
 import path from "path";
 import fs from "fs";
 
+// Ensure proper startup
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Rejection:', err);
+  process.exit(1);
+});
+
 const app = express();
 
-// Basic CORS and JSON parsing
-app.use(cors());
-app.use(express.json());
+// Basic middleware
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Request logging
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} ${req.method} ${req.path}`);
+  next();
+});
 
 // Health check - exact route
 app.get('/', (req, res) => {
@@ -82,7 +104,14 @@ app.use((req, res) => {
   }
 });
 
-const port = process.env.PORT || 5173;
-app.listen(port, '0.0.0.0', () => {
-  console.log(`ContentScale running on port ${port}`);
+const port = parseInt(process.env.PORT || '5173', 10);
+const host = '0.0.0.0';
+
+app.listen(port, host, () => {
+  console.log(`ContentScale running on http://${host}:${port}`);
+  console.log(`Health check: http://${host}:${port}/`);
+  console.log(`API status: http://${host}:${port}/api/agent/status`);
+}).on('error', (err) => {
+  console.error('Server failed to start:', err);
+  process.exit(1);
 });

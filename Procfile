@@ -1,0 +1,1 @@
+web: tsx server/deploy-server.ts

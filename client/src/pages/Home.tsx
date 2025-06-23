@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import { ArrowRight, CheckCircle, TrendingUp, Shield, Users, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import DownloadButton from "@/components/DownloadButton";
 
 const consultingAreas = [
   {
@@ -147,8 +148,24 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Contact Section */}
+      {/* Download Section */}
       <section className="py-16 bg-muted/50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Download Complete Application</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Get the complete ContentScale Consulting AI App 1 package ready for deployment and agent integration.
+            </p>
+          </div>
+          
+          <div className="flex justify-center mb-12">
+            <DownloadButton />
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section className="py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Business?</h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">

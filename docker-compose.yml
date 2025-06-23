@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  contentscale:
+    build: .
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=production
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - SESSION_SECRET=${SESSION_SECRET}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5173/api/agent/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Add Redis for session storage in production
+  # redis:
+  #   image: redis:7-alpine
+  #   restart: unless-stopped
+  #   volumes:
+  #     - redis_data:/data
+
+# volumes:
+#   redis_data:

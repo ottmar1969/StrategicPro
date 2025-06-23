@@ -21,3 +21,5 @@ externalPort = 80
 
 [deployment]
 deploymentTarget = "cloudrun"
+
+run = "tsx start.ts"

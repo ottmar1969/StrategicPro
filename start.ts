@@ -9,6 +9,11 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// In-memory storage for consultations and IP tracking
+const consultationStorage = new Map();
+const ipConsultationCount = new Map(); // Track free consultations per IP
+const creditStorage = new Map(); // Store user credits
+
 // Middleware
 app.use(express.json());
 app.use(cors());
@@ -52,7 +57,175 @@ app.get('/api/admin/download-package', (req, res) => {
   });
 });
 
-// Consultation submission endpoint
+// Check consultation eligibility
+app.post('/api/consultations/check-eligibility', (req, res) => {
+  const clientIP = req.ip || req.connection.remoteAddress || req.socket.remoteAddress;
+  const consultationCount = ipConsultationCount.get(clientIP) || 0;
+  
+  res.json({
+    success: true,
+    data: {
+      isFree: consultationCount === 0,
+      consultationsUsed: consultationCount,
+      requiresPayment: consultationCount > 0,
+      price: 1.00
+    }
+  });
+});
+
+// AI-powered consultation endpoint with internet research
+app.post('/api/consultations/ai-consultation', async (req, res) => {
+  try {
+    const { question, category, businessContext, userIP } = req.body;
+    
+    if (!process.env.PERPLEXITY_API_KEY) {
+      return res.status(500).json({
+        success: false,
+        error: 'AI consultation service not configured. Please contact administrator.'
+      });
+    }
+    
+    const clientIP = userIP || req.connection.remoteAddress || req.socket.remoteAddress;
+    const consultationCount = ipConsultationCount.get(clientIP) || 0;
+    
+    // Check if consultation is free or requires payment
+    if (consultationCount > 0) {
+      const userCredits = creditStorage.get(clientIP) || 0;
+      if (userCredits < 1) {
+        return res.json({
+          success: false,
+          requiresPayment: true,
+          message: 'This consultation requires 1 credit ($1). Please purchase credits to continue.',
+          price: 1.00
+        });
+      }
+      
+      // Deduct credit
+      creditStorage.set(clientIP, userCredits - 1);
+    }
+    
+    // Create research prompt for Perplexity
+    const researchPrompt = `You are a super-intelligent business consultant AI agent specializing in ${category}. 
+    
+CRITICAL REQUIREMENTS:
+- You MUST research current, real-world information from the internet
+- You MUST provide specific sources and citations for all claims
+- You MUST fact-check all information before providing answers
+- You are NOT allowed to give generic advice - everything must be researched and sourced
+- Focus on actionable, evidence-based recommendations
+
+Business Context:
+${businessContext ? JSON.stringify(businessContext, null, 2) : 'Not provided'}
+
+Consultation Question:
+${question}
+
+Please provide a comprehensive, researched response that includes:
+1. Current market analysis with sources
+2. Specific, actionable recommendations based on recent data
+3. Industry benchmarks and statistics with citations
+4. Risk analysis with supporting evidence
+5. Implementation roadmap with timeline
+6. Success metrics and KPIs to track
+
+Format your response with clear sections and include all source URLs at the end.`;
+
+    // Call Perplexity API for internet research
+    const response = await fetch('https://api.perplexity.ai/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'llama-3.1-sonar-large-128k-online',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a super-intelligent business consultant that researches everything online and provides fact-checked answers with sources. Never give answers without researching current information first.'
+          },
+          {
+            role: 'user',
+            content: researchPrompt
+          }
+        ],
+        max_tokens: 4000,
+        temperature: 0.2,
+        top_p: 0.9,
+        return_related_questions: true,
+        search_recency_filter: 'month',
+        stream: false
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Perplexity API error: ${response.status}`);
+    }
+    
+    const aiResponse = await response.json();
+    
+    // Update consultation count
+    ipConsultationCount.set(clientIP, consultationCount + 1);
+    
+    // Store consultation record
+    const consultationRecord = {
+      id: `ai_consultation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      type: 'ai_consultation',
+      category: category,
+      question: question,
+      businessContext: businessContext,
+      aiResponse: aiResponse.choices[0].message.content,
+      sources: aiResponse.citations || [],
+      clientIP: clientIP,
+      timestamp: new Date().toISOString(),
+      wasFree: consultationCount === 0,
+      creditsUsed: consultationCount > 0 ? 1 : 0
+    };
+    
+    consultationStorage.set(consultationRecord.id, consultationRecord);
+    
+    res.json({
+      success: true,
+      data: {
+        id: consultationRecord.id,
+        response: aiResponse.choices[0].message.content,
+        sources: aiResponse.citations || [],
+        consultationsUsed: consultationCount + 1,
+        creditsRemaining: consultationCount > 0 ? (creditStorage.get(clientIP) || 0) : 'N/A',
+        wasFree: consultationCount === 0
+      }
+    });
+    
+  } catch (error) {
+    console.error('AI Consultation Error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to process AI consultation. Please try again.'
+    });
+  }
+});
+
+// Purchase credits endpoint
+app.post('/api/consultations/purchase-credits', (req, res) => {
+  const { amount, userIP } = req.body;
+  const clientIP = userIP || req.connection.remoteAddress || req.socket.remoteAddress;
+  
+  // In production, integrate with Stripe payment processing
+  const credits = amount; // $1 = 1 credit
+  const currentCredits = creditStorage.get(clientIP) || 0;
+  creditStorage.set(clientIP, currentCredits + credits);
+  
+  res.json({
+    success: true,
+    data: {
+      creditsAdded: credits,
+      totalCredits: currentCredits + credits,
+      message: `Successfully added ${credits} consultation credits.`
+    }
+  });
+});
+
+// Consultation submission endpoint (original form-based)
 app.post('/api/consultations', (req, res) => {
   try {
     const consultationData = req.body;
@@ -1397,7 +1570,7 @@ app.get('*', (req, res) => {
                                 
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Business Description</label>
-                                    <textarea name="description" rows="4" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Describe your business and current situation" required></textarea>
+                                    <textarea name="description" rows="4" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Describe your business and current situation. For AI consultation, be specific about what you want researched..." required></textarea>
                                 </div>
                                 
                                 <div>
@@ -1461,6 +1634,13 @@ app.get('*', (req, res) => {
         
         function submitConsultationRequest(event, category) {
             event.preventDefault();
+            
+            // Check if this should be an AI consultation
+            if (event.target.querySelector('#ai-consultation-checkbox') && event.target.querySelector('#ai-consultation-checkbox').checked) {
+                handleAIConsultation(event, category);
+                return;
+            }
+            
             const formData = new FormData(event.target);
             const data = Object.fromEntries(formData.entries());
             
@@ -1516,6 +1696,171 @@ app.get('*', (req, res) => {
                 submitButton.disabled = false;
             });
         }
+        
+        async function handleAIConsultation(event, category) {
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            const submitButton = event.target.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'AI Researching...';
+            submitButton.disabled = true;
+            
+            try {
+                // Check eligibility first
+                const eligibilityResponse = await fetch('/api/consultations/check-eligibility', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userIP: getUserIP() })
+                });
+                
+                const eligibility = await eligibilityResponse.json();
+                
+                if (eligibility.data.requiresPayment) {
+                    const purchase = confirm(\`This AI consultation requires 1 credit ($1).\\n\\nYou have used \${eligibility.data.consultationsUsed} consultations.\\nClick OK to purchase credits or Cancel to submit regular consultation.\`);
+                    
+                    if (!purchase) {
+                        // Submit as regular consultation
+                        submitButton.textContent = originalText;
+                        submitButton.disabled = false;
+                        document.getElementById('ai-consultation-checkbox').checked = false;
+                        submitConsultationRequest(event, category);
+                        return;
+                    }
+                    
+                    // Mock payment for demo - in production, integrate Stripe
+                    await fetch('/api/consultations/purchase-credits', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ amount: 1, userIP: getUserIP() })
+                    });
+                }
+                
+                // Create consultation question from form data
+                const consultationQuestion = \`
+Business: \${data.businessName}
+Industry: \${data.industry}
+Description: \${data.description}
+Challenges: \${data.challenges}
+Goals: \${data.goals}
+Timeline: \${data.timeline}
+Budget: \${data.budget}
+
+Please provide a comprehensive business consultation with internet research and sources.
+                \`;
+                
+                // Call AI consultation
+                const aiResponse = await fetch('/api/consultations/ai-consultation', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        question: consultationQuestion,
+                        category: category,
+                        businessContext: {
+                            businessName: data.businessName,
+                            industry: data.industry,
+                            description: data.description,
+                            challenges: data.challenges,
+                            goals: data.goals,
+                            timeline: data.timeline,
+                            budget: data.budget
+                        },
+                        userIP: getUserIP()
+                    })
+                });
+                
+                const result = await aiResponse.json();
+                
+                if (result.success) {
+                    // Show AI consultation result
+                    showAIConsultationResult(result.data);
+                    event.target.reset();
+                } else if (result.requiresPayment) {
+                    alert(result.message);
+                } else {
+                    alert('AI consultation failed. Please try again or contact support.');
+                }
+                
+            } catch (error) {
+                console.error('AI Consultation Error:', error);
+                alert('AI consultation service temporarily unavailable. Please try again later.');
+            } finally {
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            }
+        }
+        
+        function getUserIP() {
+            // In production, this would get the actual IP
+            return 'demo_ip_' + Math.random().toString(36).substr(2, 9);
+        }
+        
+        function showAIConsultationResult(data) {
+            const resultHTML = \`
+                <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                    <div class="bg-white rounded-lg max-w-4xl max-h-[90vh] overflow-y-auto p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold">AI Consultation Result</h3>
+                            <button onclick="closeAIResult()" class="text-gray-500 hover:text-gray-700 text-2xl">×</button>
+                        </div>
+                        
+                        <div class="mb-4 p-4 bg-blue-50 rounded">
+                            <p class="text-sm">
+                                <strong>Consultation ID:</strong> \${data.id}<br>
+                                <strong>Status:</strong> \${data.wasFree ? 'FREE' : 'PAID ($1)'}<br>
+                                <strong>Consultations Used:</strong> \${data.consultationsUsed}<br>
+                                <strong>Credits Remaining:</strong> \${data.creditsRemaining}
+                            </p>
+                        </div>
+                        
+                        <div class="prose max-w-none">
+                            <div class="whitespace-pre-wrap bg-gray-50 p-4 rounded border-l-4 border-blue-500">\${data.response}</div>
+                        </div>
+                        
+                        \${data.sources && data.sources.length > 0 ? \`
+                            <div class="mt-6 p-4 bg-gray-50 rounded">
+                                <h4 class="font-semibold mb-2">Sources & Citations:</h4>
+                                <ul class="list-disc pl-5">
+                                    \${data.sources.map(source => \`<li><a href="\${source}" target="_blank" class="text-blue-600 hover:underline">\${source}</a></li>\`).join('')}
+                                </ul>
+                            </div>
+                        \` : ''}
+                        
+                        <div class="mt-6 flex justify-center">
+                            <button onclick="closeAIResult()" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            \`;
+            
+            document.body.insertAdjacentHTML('beforeend', resultHTML);
+        }
+        
+        function closeAIResult() {
+            const modal = document.querySelector('.fixed.inset-0.bg-black');
+            if (modal) {
+                modal.remove();
+            }
+        }
+        
+        // Add event listener for AI consultation checkbox
+        document.addEventListener('change', function(e) {
+            if (e.target.id === 'ai-consultation-checkbox') {
+                const form = e.target.closest('form');
+                const aiText = form.querySelector('.ai-submit-text');
+                const regularText = form.querySelector('.regular-submit-text');
+                
+                if (e.target.checked) {
+                    aiText.classList.remove('hidden');
+                    regularText.classList.add('hidden');
+                } else {
+                    aiText.classList.add('hidden');
+                    regularText.classList.remove('hidden');
+                }
+            }
+        });
         
         function acceptCookies() {
             localStorage.setItem('cookies-accepted', 'true');

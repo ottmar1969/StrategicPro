@@ -347,6 +347,223 @@ app.post('/api/consultations/:id/forward', (req, res) => {
   });
 });
 
+// Admin AI Response System (Free for Admin)
+app.post('/api/consultations/:id/ai-response', async (req, res) => {
+  const adminKey = req.query.key;
+  if (adminKey !== 'dev-admin-2025') {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  const { id } = req.params;
+  const { customPrompt } = req.body;
+  
+  const consultation = consultationStorage.get(id);
+  if (!consultation) {
+    return res.status(404).json({ error: 'Consultation not found' });
+  }
+
+  if (!process.env.PERPLEXITY_API_KEY) {
+    return res.status(500).json({ error: 'Perplexity API key not configured' });
+  }
+
+  try {
+    // Build comprehensive consultation prompt
+    const consultationPrompt = `As a super-intelligent business consultant, provide a comprehensive analysis and response for this consultation request:
+
+Business: ${consultation.businessName}
+Industry: ${consultation.industry}
+Category: ${consultation.category}
+Description: ${consultation.description}
+Challenges: ${consultation.challenges.join(', ')}
+Goals: ${consultation.goals.join(', ')}
+Timeline: ${consultation.timeline}
+Budget: ${consultation.budget}
+
+${customPrompt ? `Additional Admin Instructions: ${customPrompt}` : ''}
+
+Please provide:
+1. Executive Summary
+2. Detailed Analysis with online research
+3. Strategic Recommendations with implementation steps
+4. Risk Assessment
+5. Success Metrics
+6. Next Steps with timeline
+
+Use real-time data and industry insights. Include relevant sources and citations.`;
+
+    const response = await fetch('https://api.perplexity.ai/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'llama-3.1-sonar-large-128k-online',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a world-class business consultant with access to real-time data. Provide comprehensive, actionable advice with sources.'
+          },
+          {
+            role: 'user',
+            content: consultationPrompt
+          }
+        ],
+        max_tokens: 4000,
+        temperature: 0.2,
+        top_p: 0.9,
+        return_images: false,
+        return_related_questions: true,
+        search_recency_filter: 'month'
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Perplexity API error: ${response.status}`);
+    }
+
+    const aiResult = await response.json();
+    const aiResponse = aiResult.choices[0].message.content;
+    const citations = aiResult.citations || [];
+    const relatedQuestions = aiResult.choices[0].message.related_questions || [];
+
+    // Save AI response to consultation
+    consultation.aiResponse = {
+      content: aiResponse,
+      citations: citations,
+      relatedQuestions: relatedQuestions,
+      generatedAt: new Date().toISOString(),
+      generatedBy: 'admin_ai_system',
+      customPrompt: customPrompt || null
+    };
+    consultation.status = 'ai_responded';
+    consultationStorage.set(id, consultation);
+
+    res.json({
+      success: true,
+      message: 'AI response generated successfully',
+      data: {
+        consultation: consultation,
+        aiResponse: consultation.aiResponse
+      }
+    });
+
+  } catch (error) {
+    console.error('AI Response Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to generate AI response',
+      details: error.message 
+    });
+  }
+});
+
+// Get AI response for consultation
+app.get('/api/consultations/:id/ai-response', (req, res) => {
+  const adminKey = req.query.key;
+  if (adminKey !== 'dev-admin-2025') {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  const { id } = req.params;
+  const consultation = consultationStorage.get(id);
+  
+  if (!consultation) {
+    return res.status(404).json({ error: 'Consultation not found' });
+  }
+  
+  res.json({
+    success: true,
+    data: {
+      hasAiResponse: !!consultation.aiResponse,
+      aiResponse: consultation.aiResponse || null,
+      consultation: consultation
+    }
+  });
+});
+
+// Email AI response to client
+app.post('/api/consultations/:id/email-response', async (req, res) => {
+  const adminKey = req.query.key;
+  if (adminKey !== 'dev-admin-2025') {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  const { id } = req.params;
+  const { email } = req.body;
+  
+  const consultation = consultationStorage.get(id);
+  if (!consultation) {
+    return res.status(404).json({ error: 'Consultation not found' });
+  }
+  
+  if (!consultation.aiResponse) {
+    return res.status(400).json({ error: 'No AI response found for this consultation' });
+  }
+  
+  try {
+    if (process.env.SENDGRID_API_KEY) {
+      const sgMail = require('@sendgrid/mail');
+      sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+      
+      const emailContent = `
+Dear ${consultation.businessName} Team,
+
+Thank you for your consultation request. Please find our comprehensive business analysis below:
+
+CONSULTATION DETAILS:
+- Business: ${consultation.businessName}
+- Industry: ${consultation.industry}
+- Category: ${consultation.category}
+
+AI-POWERED CONSULTATION RESPONSE:
+${consultation.aiResponse.content}
+
+${consultation.aiResponse.citations && consultation.aiResponse.citations.length > 0 ? 
+`SOURCES & REFERENCES:
+${consultation.aiResponse.citations.map(citation => `• ${citation}`).join('\n')}` : ''}
+
+Best regards,
+ContentScale Consulting Team
+O. Francisca
+Phone/WhatsApp: +31 628073996
+Website: contentscale.site
+      `;
+      
+      const msg = {
+        to: email,
+        from: 'consultant@contentscale.site',
+        subject: `Business Consultation Response - ${consultation.businessName}`,
+        text: emailContent,
+        html: emailContent.replace(/\n/g, '<br>')
+      };
+      
+      await sgMail.send(msg);
+      
+      // Mark as emailed
+      consultation.emailedAt = new Date().toISOString();
+      consultation.emailedTo = email;
+      consultationStorage.set(id, consultation);
+      
+      res.json({
+        success: true,
+        message: `AI consultation response emailed to ${email}`
+      });
+    } else {
+      res.json({
+        success: false,
+        error: 'Email service not configured. Please set SENDGRID_API_KEY.',
+        response: consultation.aiResponse.content
+      });
+    }
+  } catch (error) {
+    console.error('Email error:', error);
+    res.status(500).json({
+      error: 'Failed to send email',
+      details: error.message
+    });
+  }
+});
+
 // Delete consultation
 app.delete('/api/consultations/:id', (req, res) => {
   const adminKey = req.query.key;

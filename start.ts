@@ -702,59 +702,98 @@ app.get('*', (req, res) => {
                             </div>
                             
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <!-- Free Tier -->
-                                <div class="border border-gray-200 rounded-lg p-6 text-center">
-                                    <h3 class="text-xl font-bold mb-2">Free Trial</h3>
-                                    <div class="text-3xl font-bold text-green-600 mb-4">$0</div>
-                                    <ul class="text-left space-y-2 mb-6">
-                                        <li>✅ 1 article generation</li>
-                                        <li>✅ Basic CRAFT framework</li>
-                                        <li>✅ SEO optimization</li>
-                                        <li>✅ 2400-3600 words</li>
-                                        <li>❌ Custom AI models</li>
-                                        <li>❌ Internal linking</li>
-                                    </ul>
-                                    <button class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">Start Free</button>
-                                </div>
-
-                                <!-- Pay Per Article -->
-                                <div class="border-2 border-blue-500 rounded-lg p-6 text-center relative">
-                                    <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-500 text-white px-4 py-1 rounded-full text-sm">Most Popular</div>
-                                    <h3 class="text-xl font-bold mb-2">Pay Per Article</h3>
-                                    <div class="text-3xl font-bold text-blue-600 mb-4">$1.00</div>
-                                    <p class="text-sm text-gray-600 mb-4">With your own API key</p>
-                                    <ul class="text-left space-y-2 mb-6">
-                                        <li>✅ Unlimited articles</li>
-                                        <li>✅ Advanced CRAFT framework</li>
-                                        <li>✅ 100/100 RankMath scores</li>
-                                        <li>✅ Government source citations</li>
-                                        <li>✅ Google AI Overview optimization</li>
-                                        <li>✅ Custom AI models</li>
-                                        <li>✅ Internal linking</li>
-                                    </ul>
-                                    <button class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Get Started</button>
-                                </div>
-
                                 <!-- Credits Package -->
-                                <div class="border border-gray-200 rounded-lg p-6 text-center">
+                                <div class="border-2 border-purple-500 rounded-lg p-6 text-center relative">
+                                    <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-purple-500 text-white px-4 py-1 rounded-full text-sm">Best Value</div>
                                     <h3 class="text-xl font-bold mb-2">Credits Package</h3>
-                                    <div class="text-3xl font-bold text-purple-600 mb-4">$10</div>
-                                    <p class="text-sm text-gray-600 mb-4">15 credits included</p>
-                                    <ul class="text-left space-y-2 mb-6">
-                                        <li>✅ 15 article generations</li>
-                                        <li>✅ Premium AI models</li>
-                                        <li>✅ Priority processing</li>
-                                        <li>✅ Advanced analytics</li>
-                                        <li>✅ Excel import/export</li>
-                                        <li>✅ Custom templates</li>
-                                        <li>✅ Priority support</li>
+                                    <div class="text-3xl font-bold text-purple-600 mb-4">$3.00</div>
+                                    <p class="text-sm text-gray-600 mb-4">With our API</p>
+                                    <ul class="text-left space-y-2 mb-6 text-sm">
+                                        <li class="flex items-center"><span class="text-green-500 mr-2">✅</span> Unlimited articles</li>
+                                        <li class="flex items-center"><span class="text-green-500 mr-2">✅</span> Advanced CRAFT framework</li>
+                                        <li class="flex items-center"><span class="text-green-500 mr-2">✅</span> 100/100 RankMath scores</li>
+                                        <li class="flex items-center"><span class="text-green-500 mr-2">✅</span> Government source citations</li>
+                                        <li class="flex items-center"><span class="text-green-500 mr-2">✅</span> Google AI Overview optimization</li>
+                                        <li class="flex items-center"><span class="text-green-500 mr-2">✅</span> Custom AI models</li>
+                                        <li class="flex items-center"><span class="text-green-500 mr-2">✅</span> Internal linking</li>
                                     </ul>
-                                    <button class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700">Buy Credits</button>
+                                    <button onclick="selectPlan('credits', 3.00)" class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition-colors">Get Started</button>
+                                </div>
+
+                                <!-- Pay Per Article with Own API -->
+                                <div class="border border-gray-200 rounded-lg p-6 text-center">
+                                    <h3 class="text-xl font-bold mb-2">With your own API key</h3>
+                                    <div class="text-3xl font-bold text-blue-600 mb-4">$1.00</div>
+                                    <p class="text-sm text-gray-600 mb-4">Per article</p>
+                                    <ul class="text-left space-y-2 mb-6 text-sm">
+                                        <li class="flex items-center"><span class="text-green-500 mr-2">✅</span> Unlimited articles</li>
+                                        <li class="flex items-center"><span class="text-green-500 mr-2">✅</span> Advanced CRAFT framework</li>
+                                        <li class="flex items-center"><span class="text-green-500 mr-2">✅</span> 100/100 RankMath scores</li>
+                                        <li class="flex items-center"><span class="text-green-500 mr-2">✅</span> Government source citations</li>
+                                        <li class="flex items-center"><span class="text-green-500 mr-2">✅</span> Google AI Overview optimization</li>
+                                        <li class="flex items-center"><span class="text-green-500 mr-2">✅</span> Custom AI models</li>
+                                        <li class="flex items-center"><span class="text-green-500 mr-2">✅</span> Internal linking</li>
+                                    </ul>
+                                    <button onclick="selectPlan('own-api', 1.00)" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">Get Started</button>
+                                </div>
+
+                                <!-- Premium Per Article -->
+                                <div class="border border-gray-200 rounded-lg p-6 text-center">
+                                    <h3 class="text-xl font-bold mb-2">Premium Per Article</h3>
+                                    <div class="text-3xl font-bold text-orange-600 mb-4">$10.00</div>
+                                    <p class="text-sm text-gray-600 mb-4">Using our premium API</p>
+                                    <ul class="text-left space-y-2 mb-6 text-sm">
+                                        <li class="flex items-center"><span class="text-green-500 mr-2">✅</span> Premium AI models (GPT-4, Claude)</li>
+                                        <li class="flex items-center"><span class="text-green-500 mr-2">✅</span> Advanced CRAFT framework</li>
+                                        <li class="flex items-center"><span class="text-green-500 mr-2">✅</span> 100/100 RankMath scores</li>
+                                        <li class="flex items-center"><span class="text-green-500 mr-2">✅</span> Government source citations</li>
+                                        <li class="flex items-center"><span class="text-green-500 mr-2">✅</span> Google AI Overview optimization</li>
+                                        <li class="flex items-center"><span class="text-green-500 mr-2">✅</span> Priority processing</li>
+                                        <li class="flex items-center"><span class="text-green-500 mr-2">✅</span> Enhanced research depth</li>
+                                    </ul>
+                                    <button onclick="selectPlan('premium', 10.00)" class="w-full bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700 transition-colors">Get Started</button>
+                                </div>
+                            </div>
+
+                            <!-- Payment Information -->
+                            <div class="mt-8 p-4 bg-gray-50 rounded-lg">
+                                <h4 class="font-semibold text-gray-900 mb-2">Payment Options:</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                    <div>
+                                        <strong>Credits Package ($3):</strong>
+                                        <p class="text-gray-600">Best value for regular users. Includes all premium features with our managed API.</p>
+                                    </div>
+                                    <div>
+                                        <strong>Own API Key ($1):</strong>
+                                        <p class="text-gray-600">Bring your OpenAI/Gemini API key. You control costs and usage.</p>
+                                    </div>
+                                    <div>
+                                        <strong>Premium Service ($10):</strong>
+                                        <p class="text-gray-600">Enterprise-grade with priority processing and enhanced research.</p>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="mt-8 text-center">
-                                <p class="text-gray-600">Questions? Contact O. Francisca: <a href="https://wa.me/31628073996" class="text-blue-600 hover:underline">+31 628073996</a></p>
+                                <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                                    <h4 class="font-semibold text-blue-900 mb-2">Why Choose ContentScale?</h4>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">
+                                        <div>
+                                            <strong>CRAFT Framework:</strong> Cut-Review-Add-Fact-Trust methodology for superior content quality
+                                        </div>
+                                        <div>
+                                            <strong>RankMath 100/100:</strong> Guaranteed perfect SEO scores with government source citations
+                                        </div>
+                                        <div>
+                                            <strong>AI Overview Ready:</strong> Optimized for Google's AI Overview and featured snippets
+                                        </div>
+                                        <div>
+                                            <strong>Multi-Language:</strong> 25 languages and 25 target countries supported
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600">Questions about pricing or need enterprise solutions?</p>
+                                <p class="text-gray-900 font-semibold">Contact O. Francisca: <a href="https://wa.me/31628073996" class="text-blue-600 hover:underline">+31 628073996</a></p>
                             </div>
                         </div>
                     </div>
@@ -1583,6 +1622,81 @@ app.get('*', (req, res) => {
         
         function closePricingModal() {
             document.getElementById('pricingModal').classList.add('hidden');
+        }
+        
+        function selectPlan(planType, price) {
+            let planDetails = {};
+            
+            switch(planType) {
+                case 'credits':
+                    planDetails = {
+                        name: 'Credits Package',
+                        price: 3.00,
+                        type: 'credits',
+                        features: [
+                            'Unlimited articles with our API',
+                            'Advanced CRAFT framework',
+                            '100/100 RankMath SEO scores',
+                            'Government source citations (.gov, .edu, .org)',
+                            'Google AI Overview optimization',
+                            'Custom AI models',
+                            'Internal linking system',
+                            'Priority processing'
+                        ],
+                        apiProvider: 'ContentScale API',
+                        billing: 'one-time'
+                    };
+                    break;
+                    
+                case 'own-api':
+                    planDetails = {
+                        name: 'With Your Own API Key',
+                        price: 1.00,
+                        type: 'per-article-own-api',
+                        features: [
+                            'Unlimited articles (your API costs)',
+                            'Advanced CRAFT framework',
+                            '100/100 RankMath SEO scores',
+                            'Government source citations',
+                            'Google AI Overview optimization',
+                            'Custom AI models (your choice)',
+                            'Internal linking system'
+                        ],
+                        apiProvider: 'Your OpenAI/Gemini API',
+                        billing: 'per-article',
+                        note: 'You provide your own API key and pay API costs separately'
+                    };
+                    break;
+                    
+                case 'premium':
+                    planDetails = {
+                        name: 'Premium Per Article',
+                        price: 10.00,
+                        type: 'premium-per-article',
+                        features: [
+                            'Premium AI models (GPT-4, Claude)',
+                            'Advanced CRAFT framework',
+                            '100/100 RankMath SEO scores',
+                            'Government source citations',
+                            'Google AI Overview optimization',
+                            'Priority processing queue',
+                            'Enhanced research depth',
+                            'Premium support'
+                        ],
+                        apiProvider: 'Premium ContentScale API',
+                        billing: 'per-article'
+                    };
+                    break;
+            }
+            
+            // Store plan selection for payment processing
+            localStorage.setItem('selectedPlan', JSON.stringify(planDetails));
+            
+            // Show confirmation
+            alert(\`Selected Plan: \${planDetails.name}\\nPrice: $\${planDetails.price}\\nAPI: \${planDetails.apiProvider}\\n\\nContact O. Francisca at +31 628073996 to complete payment and setup.\`);
+            
+            // Close modal
+            closePricingModal();
         }
         
         function generateContent() {

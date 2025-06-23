@@ -1,112 +1,44 @@
-import { z } from "zod";
-import { createInsertSchema } from "drizzle-zod";
+import { z } from 'zod';
 
-// Consulting Categories
-export const ConsultingCategory = z.enum([
-  "seo",
-  "business-strategy",
-  "financial",
-  "marketing",
-  "operations",
-  "human-resources",
-  "it-consulting",
-  "legal",
-  "sales",
-  "customer-experience",
-  "sustainability",
-  "cybersecurity"
-]);
+// Consulting categories
+export const ConsultingCategories = [
+  'seo',
+  'business_strategy',
+  'financial',
+  'marketing',
+  'operations',
+  'hr',
+  'it',
+  'legal',
+  'sales',
+  'customer_experience',
+  'sustainability',
+  'cybersecurity'
+] as const;
 
-export type ConsultingCategory = z.infer<typeof ConsultingCategory>;
+export type ConsultingCategory = typeof ConsultingCategories[number];
 
-// Consultation Request Schema
+// Base schemas
 export const ConsultationRequestSchema = z.object({
-  id: z.string(),
-  category: ConsultingCategory,
-  title: z.string(),
-  description: z.string(),
-  businessContext: z.string(),
-  urgency: z.enum(["low", "medium", "high", "critical"]),
-  budget: z.string().optional(),
-  timeline: z.string().optional(),
-  status: z.enum(["pending", "analyzing", "completed"]).default("pending"),
-  createdAt: z.date(),
-  updatedAt: z.date()
+  category: z.enum(ConsultingCategories),
+  businessName: z.string().min(1, 'Business name is required').max(100),
+  industry: z.string().min(1, 'Industry is required').max(50),
+  description: z.string().min(10, 'Description must be at least 10 characters').max(1000),
+  specificChallenges: z.array(z.string().min(1).max(200)).min(1, 'At least one challenge is required').max(10),
+  goals: z.array(z.string().min(1).max(200)).min(1, 'At least one goal is required').max(10),
+  timeline: z.enum(['immediate', '1-3_months', '3-6_months', '6-12_months', '12+_months']),
+  budget: z.enum(['under_5k', '5k-15k', '15k-50k', '50k-100k', '100k+']),
 });
 
-export const InsertConsultationRequestSchema = ConsultationRequestSchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-  status: true
-});
-
-export type ConsultationRequest = z.infer<typeof ConsultationRequestSchema>;
-export type InsertConsultationRequest = z.infer<typeof InsertConsultationRequestSchema>;
-
-// AI Analysis Result Schema
-export const AnalysisResultSchema = z.object({
-  id: z.string(),
-  consultationId: z.string(),
-  analysis: z.string(),
-  recommendations: z.array(z.string()),
-  actionItems: z.array(z.string()),
-  riskAssessment: z.string().optional(),
-  expectedOutcomes: z.array(z.string()),
-  implementationPlan: z.string(),
-  resources: z.array(z.string()),
-  metrics: z.array(z.string()),
-  timeline: z.string(),
-  confidence: z.number().min(0).max(1),
-  createdAt: z.date()
-});
-
-export const InsertAnalysisResultSchema = AnalysisResultSchema.omit({
-  id: true,
-  createdAt: true
-});
-
-export type AnalysisResult = z.infer<typeof AnalysisResultSchema>;
-export type InsertAnalysisResult = z.infer<typeof InsertAnalysisResultSchema>;
-
-// Business Profile Schema
 export const BusinessProfileSchema = z.object({
-  id: z.string(),
-  companyName: z.string(),
-  industry: z.string(),
-  size: z.enum(["startup", "small", "medium", "large", "enterprise"]),
-  revenue: z.string().optional(),
-  location: z.string().optional(),
-  description: z.string(),
-  currentChallenges: z.array(z.string()),
-  goals: z.array(z.string()),
-  competitors: z.array(z.string()),
-  targetMarket: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date()
+  name: z.string().min(1, 'Business name is required').max(100),
+  industry: z.string().min(1, 'Industry is required').max(50),
+  size: z.enum(['startup', 'small', 'medium', 'large', 'enterprise']),
+  description: z.string().min(10, 'Description must be at least 10 characters').max(1000),
+  challenges: z.array(z.string().min(1).max(200)).max(20),
+  goals: z.array(z.string().min(1).max(200)).max(20),
 });
 
-export const InsertBusinessProfileSchema = BusinessProfileSchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true
-});
-
+// Type exports
+export type ConsultationRequest = z.infer<typeof ConsultationRequestSchema>;
 export type BusinessProfile = z.infer<typeof BusinessProfileSchema>;
-export type InsertBusinessProfile = z.infer<typeof InsertBusinessProfileSchema>;
-
-// Export validation schemas for forms
-export const ConsultationFormSchema = InsertConsultationRequestSchema.extend({
-  category: ConsultingCategory,
-  title: z.string().min(10, "Title must be at least 10 characters"),
-  description: z.string().min(50, "Description must be at least 50 characters"),
-  businessContext: z.string().min(30, "Business context must be at least 30 characters"),
-  urgency: z.enum(["low", "medium", "high", "critical"])
-});
-
-export const BusinessProfileFormSchema = InsertBusinessProfileSchema.extend({
-  companyName: z.string().min(2, "Company name must be at least 2 characters"),
-  industry: z.string().min(2, "Industry must be specified"),
-  description: z.string().min(50, "Description must be at least 50 characters"),
-  targetMarket: z.string().min(10, "Target market must be specified")
-});

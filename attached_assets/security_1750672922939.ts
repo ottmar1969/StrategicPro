@@ -169,3 +169,4 @@ export function securityErrorHandler(err: any, req: Request, res: Response, next
     error: 'Security validation failed'
   });
 }
+

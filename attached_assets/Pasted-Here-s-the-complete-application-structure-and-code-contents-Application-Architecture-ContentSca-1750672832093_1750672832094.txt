@@ -1,0 +1,51 @@
+Here's the complete application structure and code contents:
+
+Application Architecture
+ContentScale is a full-stack AI business consulting platform with the following structure:
+
+Core Configuration Files
+package.json - Dependencies include React 19, Express 5, Google Gemini AI, Vite, TypeScript, TailwindCSS, and Zod for validation.
+
+tsconfig.json - TypeScript configuration with path aliases for @/, @shared/, and @assets/.
+
+.replit - Replit configuration with Node.js 20, ports 3000/5000/5173, and Cloud Run deployment target.
+
+start - Production startup script that runs the deployment server via tsx.
+
+Backend Structure
+server/routes.ts - Main API routes handling:
+
+/api/consultations - CRUD operations for consultation requests
+/api/analysis/:consultationId - AI analysis results
+/api/business-profiles - Business profile management
+/api/business-overview - AI-generated business overviews
+/api/admin/download-package - Admin download functionality
+dev-server.ts - Development server with Vite integration, security middleware, session management, and API routing.
+
+server/ai-consultant.ts - Google Gemini AI integration with specialized consulting expertise for 12 categories (SEO, business strategy, financial, marketing, operations, HR, IT, legal, sales, customer experience, sustainability, cybersecurity).
+
+server/security.ts - Security middleware including rate limiting, API key validation, input sanitization, CORS configuration, and agent authentication.
+
+server/storage.ts - In-memory storage implementation with interfaces for consultations, analysis results, and business profiles.
+
+Frontend Structure
+client/src/App.tsx - React router setup with wouter, theme provider, and page components including Home, Dashboard, ConsultationForm, AnalysisResults, BusinessProfile, ContentWriter, and AdminDownload.
+
+tailwind.config.ts - TailwindCSS configuration with dark mode support, custom color variables, and shadcn/ui integration.
+
+Data Schema
+shared/schema.ts - Zod schemas defining:
+
+12 consulting categories
+Consultation request structure with validation
+Analysis result schemas
+Business profile schemas
+Form validation schemas
+Key Features
+AI Consulting - Google Gemini integration with category-specific expertise
+Security - Rate limiting, input validation, CORS protection
+Content Generation - AI-powered content creation with fraud detection
+Admin Functions - Download packages and system management
+Responsive UI - React with TailwindCSS and dark mode support
+Type Safety - Full TypeScript implementation with Zod validation
+The application uses in-memory storage for development, Express.js for the backend, React for the frontend, and Google Gemini AI for intelligent business consulting across multiple categories.

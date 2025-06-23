@@ -82,14 +82,16 @@ if (process.env.NODE_ENV === 'production') {
   });
 } else {
   // Development mode with Vite
-  createServer({
-    server: { middlewareMode: true },
-    appType: 'spa',
-    root: join(__dirname, 'client')
-  }).then(vite => {
+  try {
+    const vite = await createServer({
+      server: { middlewareMode: true },
+      appType: 'spa',
+      root: join(__dirname, 'client')
+    });
+    
     app.use(vite.ssrFixStacktrace);
     app.use(vite.middlewares);
-  }).catch(error => {
+  } catch (error) {
     console.warn('Vite server not available, serving static fallback');
     // Fallback for when Vite is not available
     app.get('*', (req, res) => {
@@ -111,7 +113,7 @@ if (process.env.NODE_ENV === 'production') {
         </html>
       `);
     });
-  });
+  }
 }
 
 // Error handling middleware
@@ -151,3 +153,4 @@ process.on('SIGTERM', () => {
 });
 
 export default app;
+

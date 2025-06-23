@@ -1,16 +1,17 @@
-import express from "express";
-import { z } from "zod";
-import { storage } from "./storage";
-import { generateConsultingAnalysis, generateBusinessOverview } from "./ai-consultant";
-import { ConsultationFormSchema, BusinessProfileFormSchema } from "../shared/schema.js";
+import { Router } from 'express';
+import { z } from 'zod';
+import { aiConsultant } from './ai-consultant.js';
+import { storage } from './storage.js';
+import { validateInput, requireAuth } from './security.js';
+import { ConsultationRequestSchema, BusinessProfileSchema } from '../shared/schema.js';
 
-const router = express.Router();
+const router = Router();
 
-// Consultation Routes
-router.post("/api/consultations", async (req, res) => {
+// Consultation endpoints
+router.post('/consultations', validateInput(ConsultationRequestSchema), async (req, res) => {
   try {
-    const validatedData = ConsultationFormSchema.parse(req.body);
-    const consultation = await storage.createConsultationRequest(validatedData);
+    const consultationData = req.body;
+    const consultation = await storage.createConsultation(consultationData);
     
     // Start analysis process
     setTimeout(async () => {
@@ -150,4 +151,4 @@ router.get("/api/admin/download-package", async (req, res) => {
   }
 });
 
-export default router;
+export { router as routes };

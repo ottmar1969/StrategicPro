@@ -237,3 +237,4 @@ class AIConsultant {
 }
 
 export const aiConsultant = new AIConsultant();
+

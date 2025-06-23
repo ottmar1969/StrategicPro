@@ -75,33 +75,18 @@ async function startProductionServer() {
     }
   }
   
-  // Handle fallback routing without path-to-regexp issues
-  app.use((req, res, next) => {
-    // Skip API routes and admin downloads
+  // Fallback for SPA routing - serve index.html for non-API routes
+  app.get('/*', (req, res) => {
+    // Skip API routes
     if (req.path.startsWith('/api/') || req.path.startsWith('/admin/download/')) {
-      return next();
+      return res.status(404).json({ error: 'Endpoint not found' });
     }
     
-    // Try to serve index.html from various locations
-    const indexPaths = [
-      path.join(__dirname, '../dist/index.html'),
-      path.join(__dirname, '../client/dist/index.html'), 
-      path.join(__dirname, '../client/index.html'),
-      path.join(process.cwd(), 'dist/index.html'),
-      path.join(process.cwd(), 'client/dist/index.html'),
-      path.join(process.cwd(), 'client/index.html')
-    ];
+    // Always serve the public index.html for any route
+    const publicIndexPath = path.join(process.cwd(), 'public/index.html');
     
-    let indexPath = null;
-    for (const testPath of indexPaths) {
-      if (fs.existsSync(testPath)) {
-        indexPath = testPath;
-        break;
-      }
-    }
-    
-    if (indexPath) {
-      res.sendFile(indexPath);
+    if (fs.existsSync(publicIndexPath)) {
+      res.sendFile(publicIndexPath);
     } else {
       // Create a basic HTML page if index.html doesn't exist
       res.send(`
@@ -167,15 +152,6 @@ async function startProductionServer() {
         </body>
         </html>
       `);
-    }
-  });
-  
-  // Simple 404 handler
-  app.use((req, res, next) => {
-    if (req.path.startsWith('/api/')) {
-      res.status(404).json({ error: 'API endpoint not found' });
-    } else {
-      next();
     }
   });
   

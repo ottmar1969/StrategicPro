@@ -38,6 +38,16 @@ async function startProductionServer() {
   
   app.use(express.json());
   
+  // Health check endpoint for deployment
+  app.get('/', (req, res) => {
+    res.status(200).json({ 
+      status: 'healthy', 
+      service: 'ContentScale Platform',
+      timestamp: new Date().toISOString(),
+      version: '1.0.0'
+    });
+  });
+  
   // API routes
   app.use(routes);
   app.use(agentRoutes);
@@ -48,8 +58,11 @@ async function startProductionServer() {
     const distPath = path.join(__dirname, '../dist');
     app.use(express.static(distPath));
     
-    // Handle SPA routing
-    app.get('*', (req, res) => {
+    // Handle SPA routing - but not for API routes or health check
+    app.get('*', (req, res, next) => {
+      if (req.path.startsWith('/api/') || req.path === '/') {
+        return next();
+      }
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }

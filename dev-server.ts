@@ -46,6 +46,17 @@ async function startServer() {
   app.use(express.json());
   app.use(vite.ssrFixStacktrace);
   
+  // Health check endpoint for deployment
+  app.get('/', (req, res) => {
+    res.status(200).json({ 
+      status: 'healthy', 
+      service: 'ContentScale Platform',
+      timestamp: new Date().toISOString(),
+      version: '1.0.0',
+      mode: 'development'
+    });
+  });
+  
   // API routes
   app.use(routes);
   app.use(agentRoutes);

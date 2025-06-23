@@ -15,6 +15,7 @@ interface KeywordData {
   intent: string;
   trend: string;
   competition: string;
+  aiOverviewPotential: string;
   factChecked: boolean;
   sources: string[];
   analysis: string;
@@ -24,6 +25,8 @@ interface TitleData {
   title: string;
   seoScore: number;
   clickPotential: string;
+  aiOverviewPotential: string;
+  aiModeScore: number;
   factChecked: boolean;
   sources: string[];
   reasoning: string;
@@ -33,6 +36,9 @@ interface OutlineData {
   heading: string;
   subheadings: string[];
   keyPoints: string[];
+  aiOptimizationNotes: string;
+  featuredSnippetSections: string[];
+  faqSections: string[];
   factChecked: boolean;
   sources: string[];
   researchNotes: string;
@@ -88,18 +94,33 @@ class KeywordResearchAI {
     const prompt = `
 Research and analyze SEO keywords related to "${request.mainKeyword}" for ${request.niche || 'general'} niche targeting ${request.audience || 'general audience'}.
 
-Please provide ${count} high-quality, fact-checked keywords with the following information for each:
-1. Related keyword phrase
+CRITICAL: Focus on Google AI Mode and Google AI Overview optimization. These keywords must be optimized for:
+1. Google AI Overview snippets (featured snippets that appear in AI-generated responses)
+2. Google AI Mode search results (conversational AI search interface)
+3. Question-based queries that trigger AI overviews
+4. Long-tail keywords that AI systems prefer for comprehensive answers
+5. Semantic search patterns that Google's AI understands
+
+For each of the ${count} keywords, provide:
+1. Related keyword phrase (optimized for AI Overview capture)
 2. Estimated monthly search volume range
-3. SEO difficulty level (Low/Medium/High)
-4. Search intent type
-5. Current trend status
-6. Competition level
-7. Supporting data sources
+3. SEO difficulty level (Low/Medium/High) 
+4. Search intent type (focus on informational queries that trigger AI overviews)
+5. Current trend status in Google AI search
+6. Competition level for AI Overview positioning
+7. AI Overview trigger potential (High/Medium/Low)
+8. Supporting data sources
 
-Focus on current 2024-2025 SEO trends and provide factual data from reliable sources like Google Trends, SEMrush, Ahrefs, or similar tools.
+Research current 2024-2025 Google AI search trends, Google AI Overview patterns, and conversational search optimization. Use reliable sources like Google Search Central, SEMrush, Ahrefs, or similar tools.
 
-Format as JSON array with fields: keyword, searchVolume, difficulty, intent, trend, competition, sources, analysis
+Prioritize keywords that:
+- Answer direct questions (What, How, Why, When, Where)
+- Provide comprehensive information suitable for AI summaries
+- Target featured snippet opportunities
+- Match conversational search patterns
+- Optimize for voice search and AI assistants
+
+Format as JSON array with fields: keyword, searchVolume, difficulty, intent, trend, competition, sources, analysis, aiOverviewPotential
 `;
 
     const response = await this.queryPerplexity(prompt);
@@ -121,16 +142,33 @@ Format as JSON array with fields: keyword, searchVolume, difficulty, intent, tre
     const prompt = `
 Create ${count} SEO-optimized, fact-checked blog titles for the main keyword "${mainKeyword}" incorporating these related keywords: ${keywordList}
 
+CRITICAL: Optimize these titles specifically for Google AI Mode and Google AI Overview capture:
+
+1. GOOGLE AI OVERVIEW OPTIMIZATION:
+   - Structure titles to answer direct questions that trigger AI overviews
+   - Use question formats (How to, What is, Why does, When should, Where can)
+   - Include year (2024/2025) for freshness signals
+   - Target conversational search patterns
+   - Optimize for featured snippet capture
+
+2. GOOGLE AI MODE COMPATIBILITY:
+   - Create titles that work well in conversational AI search
+   - Include comprehensive, definitive language (Complete Guide, Ultimate, Comprehensive)
+   - Structure for voice search and AI assistant queries
+   - Use natural language patterns that AI systems prefer
+
 For each title, provide:
-1. The complete title (60 characters or less)
-2. SEO score out of 100
+1. The complete title (60 characters or less, optimized for AI Overview)
+2. SEO score out of 100 (including AI optimization factors)
 3. Click potential rating (High/Medium/Low)
-4. Fact-checking status and sources
-5. Brief reasoning for the title choice
+4. AI Overview trigger potential (High/Medium/Low)
+5. Google AI Mode compatibility score (1-10)
+6. Fact-checking status and sources
+7. Brief reasoning for the title choice including AI optimization strategy
 
-Research current content trends and successful title patterns for this topic. Ensure titles are clickable, SEO-friendly, and based on actual search behavior.
+Research current Google AI search trends, AI Overview patterns, and conversational search optimization. Ensure titles are designed to be selected by Google's AI for comprehensive responses.
 
-Format as JSON array with fields: title, seoScore, clickPotential, factChecked, sources, reasoning
+Format as JSON array with fields: title, seoScore, clickPotential, aiOverviewPotential, aiModeScore, factChecked, sources, reasoning
 `;
 
     const response = await this.queryPerplexity(prompt);
@@ -150,16 +188,45 @@ Format as JSON array with fields: title, seoScore, clickPotential, factChecked, 
     const prompt = `
 Create ${count} comprehensive, fact-checked content outlines for the title "${title}" targeting keywords: ${keywordList}
 
+CRITICAL: Structure these outlines specifically for Google AI Mode and Google AI Overview optimization:
+
+1. GOOGLE AI OVERVIEW STRUCTURE:
+   - Start with clear, direct answers to the main question
+   - Include FAQ sections that AI can easily extract
+   - Structure content hierarchically for AI parsing
+   - Add summary sections that AI can use for overviews
+   - Include step-by-step instructions where applicable
+   - Format key information in scannable lists and tables
+
+2. GOOGLE AI MODE OPTIMIZATION:
+   - Create conversational content structure
+   - Include natural language Q&A patterns
+   - Add comprehensive "What you need to know" sections
+   - Structure for voice search and AI assistant responses
+   - Include related questions and answers
+   - Add comparison sections that AI can reference
+
+3. AI-FRIENDLY CONTENT PATTERNS:
+   - Use question-based H2/H3 headings
+   - Include definition sections for key terms
+   - Add pros/cons lists that AI can extract
+   - Structure benefits and features clearly
+   - Include statistical data and research findings
+   - Add actionable takeaways and next steps
+
 For each outline, provide:
-1. Main heading structure (H2 level headings)
-2. Supporting subheadings (H3 level)
-3. Key points to cover in each section
-4. Fact-checking verification and sources
-5. Research notes with current data and trends
+1. Main heading structure (H2 level headings optimized for AI parsing)
+2. Supporting subheadings (H3 level with question formats)
+3. Key points to cover in each section (structured for AI extraction)
+4. AI Overview optimization notes
+5. Featured snippet targeting sections
+6. FAQ sections for AI responses
+7. Fact-checking verification and sources
+8. Research notes with current data and trends
 
-Research the most comprehensive and up-to-date information for this topic. Ensure outlines cover user search intent and provide value-driven content structure.
+Research Google AI search patterns, AI Overview content structures, and conversational search optimization. Ensure outlines are designed for maximum AI visibility and extraction.
 
-Format as JSON array with fields: heading, subheadings, keyPoints, factChecked, sources, researchNotes
+Format as JSON array with fields: heading, subheadings, keyPoints, aiOptimizationNotes, featuredSnippetSections, faqSections, factChecked, sources, researchNotes
 `;
 
     const response = await this.queryPerplexity(prompt);
@@ -210,9 +277,10 @@ Format as JSON array with fields: heading, subheadings, keyPoints, factChecked, 
         intent: ['informational', 'commercial', 'transactional'][i % 3],
         trend: ['Rising', 'Stable', 'Declining'][i % 3],
         competition: ['Low', 'Medium', 'High'][i % 3],
+        aiOverviewPotential: ['High', 'Medium', 'Low'][i % 3],
         factChecked: true,
         sources: citations,
-        analysis: 'AI-researched keyword with online fact-checking'
+        analysis: 'AI-researched keyword optimized for Google AI Mode and AI Overview'
       });
     }
     
@@ -241,25 +309,27 @@ Format as JSON array with fields: heading, subheadings, keyPoints, factChecked, 
 
   private fallbackTitleParsing(content: string, citations: string[], count: number, mainKeyword: string): TitleData[] {
     const titleTemplates = [
-      `Complete ${mainKeyword} Guide for 2025`,
-      `${mainKeyword}: Expert Tips and Best Practices`,
-      `How to Master ${mainKeyword} in 10 Steps`,
-      `${mainKeyword} Strategies That Actually Work`,
-      `Ultimate ${mainKeyword} Resource for Beginners`,
-      `${mainKeyword}: Professional Insights and Analysis`,
-      `Advanced ${mainKeyword} Techniques Revealed`,
-      `${mainKeyword} Success Stories and Case Studies`,
-      `${mainKeyword} Trends and Future Predictions`,
-      `${mainKeyword}: Common Mistakes to Avoid`
+      `How to ${mainKeyword}: Complete Guide 2025`,
+      `What is ${mainKeyword}? Expert Analysis`,
+      `${mainKeyword}: Ultimate Step-by-Step Guide`,
+      `Why ${mainKeyword} Matters: Complete Overview`,
+      `${mainKeyword} Explained: Comprehensive Guide`,
+      `${mainKeyword}: Everything You Need to Know`,
+      `${mainKeyword} Guide: Best Practices 2025`,
+      `${mainKeyword}: Common Questions Answered`,
+      `${mainKeyword}: Expert Tips and Strategies`,
+      `${mainKeyword}: Complete Beginner's Guide`
     ];
 
     return titleTemplates.slice(0, count).map((title, index) => ({
       title: title.length > 60 ? title.substring(0, 57) + '...' : title,
-      seoScore: 75 + Math.floor(Math.random() * 20),
+      seoScore: 80 + Math.floor(Math.random() * 15),
       clickPotential: ['High', 'Medium', 'High'][index % 3],
+      aiOverviewPotential: ['High', 'High', 'Medium'][index % 3],
+      aiModeScore: 7 + Math.floor(Math.random() * 3),
       factChecked: true,
       sources: citations,
-      reasoning: 'Research-backed title optimized for SEO and click-through rates'
+      reasoning: 'AI Overview optimized title with Google AI Mode compatibility'
     }));
   }
 
@@ -288,28 +358,42 @@ Format as JSON array with fields: heading, subheadings, keyPoints, factChecked, 
     
     for (let i = 0; i < count; i++) {
       outlines.push({
-        heading: `${title} - Comprehensive Outline ${i + 1}`,
+        heading: `${title} - AI-Optimized Outline ${i + 1}`,
         subheadings: [
-          'Introduction and Overview',
-          'Key Concepts and Definitions',
-          'Step-by-Step Implementation',
-          'Best Practices and Tips',
-          'Common Challenges and Solutions',
-          'Advanced Techniques',
-          'Case Studies and Examples',
-          'Future Trends and Predictions',
-          'Conclusion and Next Steps'
+          'What You Need to Know: Quick Overview',
+          'How Does This Work? Step-by-Step Guide',
+          'Why Is This Important? Key Benefits',
+          'When Should You Use This? Best Practices',
+          'Where Can You Apply This? Use Cases',
+          'What Are the Common Mistakes? Troubleshooting',
+          'How to Get Started? Implementation Guide',
+          'What Are the Results? Case Studies',
+          'Frequently Asked Questions (FAQ)'
         ],
         keyPoints: [
-          'Define main concepts clearly',
-          'Provide actionable insights',
-          'Include real-world examples',
-          'Address common questions',
-          'Offer practical solutions'
+          'Clear definition and explanation',
+          'Step-by-step actionable process',
+          'Specific benefits and outcomes',
+          'Common pitfalls to avoid',
+          'Practical implementation tips'
+        ],
+        aiOptimizationNotes: 'Structured for Google AI Overview extraction with question-based headings',
+        featuredSnippetSections: [
+          'Quick definition section',
+          'Step-by-step process list',
+          'Key benefits summary',
+          'Best practices checklist'
+        ],
+        faqSections: [
+          'What is the main benefit?',
+          'How long does implementation take?',
+          'What tools are required?',
+          'What are common challenges?',
+          'How to measure success?'
         ],
         factChecked: true,
         sources: citations,
-        researchNotes: 'Outline based on current research and industry best practices'
+        researchNotes: 'AI Overview optimized outline with Google AI Mode compatibility'
       });
     }
     

@@ -104,9 +104,20 @@ SESSION_SECRET=your_session_secret
 - **Package Export**: Complete application packages for replication
 - **Data Export**: JSON exports of all stored data
 
+## Recent Changes
+
+- **June 23, 2025**: Enhanced keyword research system with Google AI Mode and AI Overview optimization
+  - Added Perplexity API integration for real-time fact-checking and online investigation
+  - Implemented AI Overview trigger potential scoring for keywords
+  - Added Google AI Mode compatibility scoring for titles (1-10 scale)
+  - Enhanced content outlines with featured snippet sections and FAQ optimization
+  - Integrated question-based content structure for AI parsing
+  - Added conversational search pattern optimization
+
 ## Changelog
 
 - June 23, 2025. Initial setup
+- June 23, 2025. Google AI optimization implementation
 
 ## User Preferences
 

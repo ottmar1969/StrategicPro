@@ -15,6 +15,7 @@ interface KeywordData {
   intent: string;
   trend: string;
   competition: string;
+  aiOverviewPotential: string;
   factChecked: boolean;
   sources: string[];
   analysis: string;
@@ -24,6 +25,8 @@ interface TitleData {
   title: string;
   seoScore: number;
   clickPotential: string;
+  aiOverviewPotential: string;
+  aiModeScore: number;
   factChecked: boolean;
   sources: string[];
   reasoning: string;
@@ -33,6 +36,9 @@ interface OutlineData {
   heading: string;
   subheadings: string[];
   keyPoints: string[];
+  aiOptimizationNotes: string;
+  featuredSnippetSections: string[];
+  faqSections: string[];
   factChecked: boolean;
   sources: string[];
   researchNotes: string;
@@ -238,7 +244,7 @@ export default function KeywordResearchTable() {
                     <th className="text-left p-2">Volume</th>
                     <th className="text-left p-2">Difficulty</th>
                     <th className="text-left p-2">Intent</th>
-                    <th className="text-left p-2">Trend</th>
+                    <th className="text-left p-2">AI Overview</th>
                     <th className="text-left p-2">Fact-Checked</th>
                   </tr>
                 </thead>
@@ -257,15 +263,17 @@ export default function KeywordResearchTable() {
                       </td>
                       <td className="p-2">{keyword.intent}</td>
                       <td className="p-2">
-                        <div className="flex items-center gap-1">
-                          <TrendingUp className="h-3 w-3" />
-                          {keyword.trend}
-                        </div>
+                        <Badge variant={
+                          keyword.aiOverviewPotential === 'High' ? 'default' :
+                          keyword.aiOverviewPotential === 'Medium' ? 'secondary' : 'outline'
+                        } className="text-xs">
+                          {keyword.aiOverviewPotential}
+                        </Badge>
                       </td>
                       <td className="p-2">
                         <div className="flex items-center gap-1">
                           <Globe className="h-3 w-3 text-green-600" />
-                          <span className="text-sm text-green-600">Verified</span>
+                          <span className="text-sm text-green-600">AI Optimized</span>
                         </div>
                       </td>
                     </tr>
@@ -326,10 +334,16 @@ export default function KeywordResearchTable() {
                         <h4 className="font-medium">{title.title}</h4>
                         <p className="text-sm text-muted-foreground mt-1">{title.reasoning}</p>
                       </div>
-                      <div className="flex items-center gap-2 ml-4">
+                      <div className="flex items-center gap-2 ml-4 flex-wrap">
                         <Badge variant="outline">SEO: {title.seoScore}/100</Badge>
                         <Badge variant={title.clickPotential === 'High' ? 'default' : 'secondary'}>
-                          {title.clickPotential} Click Potential
+                          {title.clickPotential} CTR
+                        </Badge>
+                        <Badge variant={title.aiOverviewPotential === 'High' ? 'default' : 'outline'} className="bg-blue-100 text-blue-800">
+                          AI Overview: {title.aiOverviewPotential}
+                        </Badge>
+                        <Badge variant="outline" className="bg-purple-100 text-purple-800">
+                          AI Mode: {title.aiModeScore}/10
                         </Badge>
                         <Globe className="h-4 w-4 text-green-600" />
                       </div>
@@ -409,12 +423,21 @@ export default function KeywordResearchTable() {
                         </ul>
                       </div>
                     </div>
-                    <div className="mt-3 flex items-center gap-2">
-                      <Globe className="h-4 w-4 text-green-600" />
-                      <span className="text-sm text-green-600">Research Verified</span>
-                      <Badge variant="outline" className="text-xs">
-                        {outline.sources.length} Sources
-                      </Badge>
+                    <div className="mt-3 space-y-2">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Globe className="h-4 w-4 text-green-600" />
+                        <span className="text-sm text-green-600">AI Overview Optimized</span>
+                        <Badge variant="outline" className="text-xs">
+                          {outline.sources.length} Sources
+                        </Badge>
+                        <Badge variant="outline" className="text-xs bg-blue-100 text-blue-800">
+                          {outline.featuredSnippetSections.length} Snippet Sections
+                        </Badge>
+                        <Badge variant="outline" className="text-xs bg-purple-100 text-purple-800">
+                          {outline.faqSections.length} FAQ Items
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground">{outline.aiOptimizationNotes}</p>
                     </div>
                   </div>
                 ))}

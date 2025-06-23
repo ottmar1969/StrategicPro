@@ -387,6 +387,15 @@ app.post('/api/content/generate', async (req, res) => {
       }
       apiKey = userApiKey;
       cost = '$1.00';
+    } else if (apiMode === 'credits') {
+      if (!process.env.PERPLEXITY_API_KEY) {
+        return res.status(500).json({
+          success: false,
+          error: 'Platform API not configured. Please contact support or use your own API key.'
+        });
+      }
+      apiKey = process.env.PERPLEXITY_API_KEY;
+      cost = '$3.00';
     } else {
       if (!process.env.PERPLEXITY_API_KEY) {
         return res.status(500).json({
@@ -1245,7 +1254,7 @@ app.get('*', (req, res) => {
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                                     <div>
                                         <strong>Credits Package ($3):</strong>
-                                        <p class="text-gray-600">Best value for regular users. Includes all premium features with our managed API.</p>
+                                        <p class="text-gray-600">Best value for regular users. Includes Perplexity AI research with all premium features.</p>
                                     </div>
                                     <div>
                                         <strong>Own API Key ($1):</strong>

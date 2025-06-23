@@ -129,11 +129,15 @@ app.use((req, res) => {
 const port = parseInt(process.env.PORT || '5173', 10);
 const host = '0.0.0.0';
 
-app.listen(port, host, () => {
+const server = app.listen(port, host, () => {
   console.log(`ContentScale running on http://${host}:${port}`);
   console.log(`Health check: http://${host}:${port}/`);
   console.log(`API status: http://${host}:${port}/api/agent/status`);
+  console.log('Deployment ready for Replit');
 }).on('error', (err) => {
   console.error('Server failed to start:', err);
   process.exit(1);
 });
+
+// Export for external imports
+export default server;

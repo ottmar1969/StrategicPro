@@ -52,7 +52,7 @@ app.get('/api/admin/download-package', (req, res) => {
   });
 });
 
-// Backup endpoints redirecting to backup server on port 3001
+// Backup endpoints redirecting to backup servers
 app.get('/backup/:type', (req, res) => {
   const adminKey = req.query.key;
   const type = req.params.type;
@@ -61,8 +61,12 @@ app.get('/backup/:type', (req, res) => {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   
-  // Redirect to backup server
-  res.redirect(`http://localhost:3001/backup/${type}?key=${adminKey}`);
+  // Route to appropriate backup server
+  if (type.includes('comprehensive')) {
+    res.redirect(`http://localhost:3002/backup/${type}?key=${adminKey}`);
+  } else {
+    res.redirect(`http://localhost:3001/backup/${type}?key=${adminKey}`);
+  }
 });
 
 // Serve the complete application

@@ -17,6 +17,8 @@ import { apiRequest } from "@/lib/queryClient";
 import KeywordResearchTable from "@/components/KeywordResearchTable";
 import PricingDisplay from "@/components/PricingDisplay";
 import PaymentExplanation from "@/components/PaymentExplanation";
+import GeneratedContentDisplay from "@/components/GeneratedContentDisplay";
+import LoadingAnimation from "@/components/LoadingAnimation";
 
 const ContentGenerationSchema = z.object({
   topic: z.string().min(5, "Topic must be at least 5 characters"),
@@ -700,60 +702,14 @@ export default function ContentWriter() {
           </div>
         </div>
 
+        {/* Loading Animation */}
+        <LoadingAnimation isVisible={generateMutation.isPending} />
+
         {/* Generated Content Display */}
         {generatedContent && (
-          <Card className="mt-8">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5" />
-                  Generated Content
-                </CardTitle>
-                <div className="flex gap-2">
-                  <Badge>SEO Score: {generatedContent.seoScore}/100</Badge>
-                  <Button size="sm" variant="outline">
-                    <Download className="h-4 w-4 mr-2" />
-                    Download
-                  </Button>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-semibold mb-2">Title:</h3>
-                  <p className="text-lg">{generatedContent.title}</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-2">Content:</h3>
-                  <div className="prose max-w-none">
-                    <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
-                      {generatedContent.content}
-                    </pre>
-                  </div>
-                </div>
-                {generatedContent.metadata && (
-                  <div className="border-t pt-4">
-                    <h3 className="font-semibold mb-2">CRAFT Analysis:</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <strong>Keywords Used:</strong> {generatedContent.metadata.keywords}
-                      </div>
-                      <div>
-                        <strong>Target Audience:</strong> {generatedContent.metadata.audience}
-                      </div>
-                      <div>
-                        <strong>Word Count:</strong> {generatedContent.metadata.wordCount}
-                      </div>
-                      <div>
-                        <strong>Language:</strong> {generatedContent.metadata.language}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+          <div className="mt-8">
+            <GeneratedContentDisplay content={generatedContent} />
+          </div>
         )}
           </TabsContent>
 

@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Wand2, Download, CreditCard, Key, ShieldCheck, Sparkles, Target, Globe, Search } from "lucide-react";
+import { Wand2, Download, CreditCard, Key, ShieldCheck, Sparkles, Target, Globe, Search, Coins } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -15,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import KeywordResearchTable from "@/components/KeywordResearchTable";
+import PricingDisplay from "@/components/PricingDisplay";
 
 const ContentGenerationSchema = z.object({
   topic: z.string().min(5, "Topic must be at least 5 characters"),
@@ -155,7 +156,15 @@ export default function ContentWriter() {
 
   const getPrice = () => {
     if (canGenerateFree()) return 0;
-    return user.hasOwnApiKey ? 1 : 10;
+    if (user.hasOwnApiKey) return 1;
+    // Premium pricing: $5 with credits, $10 without credits
+    return user.credits > 0 ? 5 : 10;
+  };
+
+  const getCreditCost = () => {
+    if (canGenerateFree()) return 0;
+    if (user.hasOwnApiKey) return 1; // 1 credit with API key
+    return 1; // 1 credit for premium ($5 value)
   };
 
   const getFreeRemaining = () => {
@@ -215,6 +224,15 @@ export default function ContentWriter() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Content Generation Form */}
               <div className="lg:col-span-2">
+                <PricingDisplay 
+                  user={user} 
+                  onBuyCredits={() => {
+                    toast({
+                      title: "Credit Purchase",
+                      description: "Credit purchase feature coming soon!"
+                    });
+                  }}
+                />
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">

@@ -119,9 +119,16 @@ router.post("/api/content/generate", async (req, res) => {
         freeArticlesUsed: user.freeArticlesUsed + 1
       });
     } else if (eligibility.method === "credits") {
+      const creditCost = eligibility.creditCost || 1;
       await contentStorage.updateUser(user.id, {
-        credits: user.credits - 1
+        credits: user.credits - creditCost
       });
+      // Only increment free articles for API key users
+      if (user.hasOwnApiKey) {
+        await contentStorage.updateUser(user.id, {
+          freeArticlesUsed: user.freeArticlesUsed + 1
+        });
+      }
     }
 
     // Get updated user
@@ -278,6 +285,69 @@ async function checkUserEligibility(user: any) {
     method: "payment",
     price: hasApiKey ? 1 : 10,
     message: "No credits remaining. Buy credits or pay per article."
+  };
+}
+
+async function checkUserEligibility(user: any) {
+  const { credits, freeArticlesUsed, hasApiKey } = user;
+
+  // First article is always free
+  if (freeArticlesUsed === 0) {
+    return {
+      allowed: true,
+      method: "free",
+      remaining: 1,
+      price: 0
+    };
+  }
+
+  // API key users get 4 free articles, then $1 per article
+  if (hasApiKey && freeArticlesUsed < 4) {
+    return {
+      allowed: true,
+      method: "free_api",
+      remaining: 4 - freeArticlesUsed,
+      price: 0
+    };
+  }
+
+  // After free articles with API key, charge $1
+  if (hasApiKey && freeArticlesUsed >= 4) {
+    if (credits > 0) {
+      return {
+        allowed: true,
+        method: "credits",
+        remaining: credits,
+        price: 1,
+        creditCost: 1
+      };
+    }
+    return {
+      allowed: false,
+      requiresPayment: true,
+      method: "payment",
+      price: 1,
+      message: "With your API key: $1 per article after 4 free articles"
+    };
+  }
+
+  // Premium users: $5 with credits, $10 without credits
+  if (credits > 0) {
+    return {
+      allowed: true,
+      method: "credits",
+      remaining: credits,
+      price: 5,
+      creditCost: 1
+    };
+  }
+
+  return {
+    allowed: false,
+    requiresPayment: true,
+    method: "payment",
+    price: 10,
+    message: "Premium generation: $5 with credits (50% savings) or $10 direct payment"
   };
 }
 

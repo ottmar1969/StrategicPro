@@ -196,16 +196,40 @@ export default function KeywordResearchTable() {
   };
 
   const handleAddWebsite = () => {
-    if (newWebsiteUrl && !websites.includes(newWebsiteUrl)) {
-      setWebsites(prev => [...prev, newWebsiteUrl]);
-      setSelectedWebsite(newWebsiteUrl);
-      setNewWebsiteUrl("");
-      setShowAddWebsite(false);
+    if (!newWebsiteUrl.trim()) {
       toast({
-        title: "Website Added",
-        description: `${newWebsiteUrl} has been added to your website list`
+        title: "Invalid URL",
+        description: "Please enter a valid website URL",
+        variant: "destructive"
       });
+      return;
     }
+
+    let cleanUrl = newWebsiteUrl.trim();
+    // Remove protocol if present
+    cleanUrl = cleanUrl.replace(/^https?:\/\//, '');
+    // Remove www if present
+    cleanUrl = cleanUrl.replace(/^www\./, '');
+    // Remove trailing slash
+    cleanUrl = cleanUrl.replace(/\/$/, '');
+
+    if (websites.includes(cleanUrl)) {
+      toast({
+        title: "Website Already Added",
+        description: `${cleanUrl} is already in your website list`,
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setWebsites(prev => [...prev, cleanUrl]);
+    setSelectedWebsite(cleanUrl);
+    setNewWebsiteUrl("");
+    setShowAddWebsite(false);
+    toast({
+      title: "Website Added Successfully",
+      description: `${cleanUrl} has been added to your website list`
+    });
   };
 
   const handleWebsiteSelect = (value: string) => {
@@ -257,7 +281,10 @@ export default function KeywordResearchTable() {
       </Card>
 
       {/* Add Website Dialog */}
-      <Dialog open={showAddWebsite} onOpenChange={setShowAddWebsite}>
+      <Dialog open={showAddWebsite} onOpenChange={(open) => {
+        setShowAddWebsite(open);
+        if (!open) setNewWebsiteUrl("");
+      }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add New Website</DialogTitle>
@@ -267,17 +294,34 @@ export default function KeywordResearchTable() {
               <Label htmlFor="website-url">Website URL</Label>
               <Input
                 id="website-url"
-                placeholder="e.g., mywebsite.com"
+                placeholder="e.g., mywebsite.com or example.org"
                 value={newWebsiteUrl}
                 onChange={(e) => setNewWebsiteUrl(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddWebsite();
+                  }
+                }}
                 className="mt-1"
+                autoFocus
               />
+              <p className="text-sm text-muted-foreground mt-1">
+                Enter domain without http:// or www. (e.g., contentscale.site)
+              </p>
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowAddWebsite(false)}>
+              <Button variant="outline" onClick={() => {
+                setShowAddWebsite(false);
+                setNewWebsiteUrl("");
+              }}>
                 Cancel
               </Button>
-              <Button onClick={handleAddWebsite} disabled={!newWebsiteUrl}>
+              <Button 
+                onClick={handleAddWebsite} 
+                disabled={!newWebsiteUrl.trim()}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
                 Add Website
               </Button>
             </div>

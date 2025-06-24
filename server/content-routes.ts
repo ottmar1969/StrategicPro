@@ -331,14 +331,14 @@ async function checkUserEligibility(user: any) {
     };
   }
 
-  // Premium users: $5 with credits, $10 without credits
-  if (credits > 0) {
+  // Bulk articles without API key: $3 with credits (3 credits), $3 without credits
+  if (credits >= 3) {
     return {
       allowed: true,
       method: "credits",
       remaining: credits,
-      price: 5,
-      creditCost: 1
+      price: 3,
+      creditCost: 3
     };
   }
 
@@ -346,8 +346,8 @@ async function checkUserEligibility(user: any) {
     allowed: false,
     requiresPayment: true,
     method: "payment",
-    price: 10,
-    message: "Premium generation: $5 with credits (50% savings) or $10 direct payment"
+    price: 3,
+    message: "Bulk generation: 3 credits or $3 direct payment"
   };
 }
 

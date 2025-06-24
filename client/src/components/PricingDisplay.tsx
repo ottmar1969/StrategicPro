@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, CreditCard, Key, Coins } from "lucide-react";
+import { Check, CreditCard, Key, Coins, Sparkles } from "lucide-react";
 
 interface PricingDisplayProps {
   user: {
@@ -33,24 +33,24 @@ export default function PricingDisplay({ user, onBuyCredits }: PricingDisplayPro
       return {
         price: "$1.00",
         method: "With API Key",
-        description: "Discounted rate with your API key",
+        description: "Best rate with your API key",
         color: "text-blue-600"
       };
     }
     
-    if (user.credits > 0) {
+    if (user.credits >= 3) {
       return {
-        price: "1 Credit",
-        method: "Credit Payment",
-        description: "$5.00 value - 50% savings!",
+        price: "3 Credits",
+        method: "Bulk with Credits",
+        description: "$3.00 value - Same as direct payment",
         color: "text-purple-600"
       };
     }
     
     return {
-      price: "$10.00",
-      method: "Premium Per Article",
-      description: "Pay-per-use premium generation",
+      price: "$3.00",
+      method: "Bulk Direct Payment",
+      description: "Standard bulk article rate",
       color: "text-orange-600"
     };
   };
@@ -80,8 +80,8 @@ export default function PricingDisplay({ user, onBuyCredits }: PricingDisplayPro
             </div>
           </div>
 
-          {/* All Pricing Options */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {/* All Pricing Options - 3 Column Layout */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {/* API Key Option */}
             <div className={`p-3 border rounded-lg ${user.hasOwnApiKey ? 'border-blue-500 bg-blue-50' : ''}`}>
               <div className="flex items-center gap-2 mb-2">
@@ -93,28 +93,49 @@ export default function PricingDisplay({ user, onBuyCredits }: PricingDisplayPro
               <div className="text-lg font-bold text-blue-600">$1.00</div>
             </div>
 
-            {/* Credit Option */}
-            <div className={`p-3 border rounded-lg ${user.credits > 0 && !user.hasOwnApiKey ? 'border-purple-500 bg-purple-50' : ''}`}>
+            {/* Credit Package - Middle Position */}
+            <div className={`p-3 border rounded-lg relative ${user.credits > 0 ? 'border-purple-500 bg-purple-50' : ''}`}>
+              <Badge className="absolute -top-2 left-2 text-xs bg-purple-600">Best Value</Badge>
               <div className="flex items-center gap-2 mb-2">
                 <Coins className="h-4 w-4" />
-                <span className="font-medium">With Credits</span>
+                <span className="font-medium">Credits Package</span>
                 {user.credits > 0 && <Badge variant="outline" className="text-xs">{user.credits} available</Badge>}
               </div>
-              <p className="text-sm text-muted-foreground mb-2">50% savings per article</p>
+              <p className="text-sm text-muted-foreground mb-2">Bulk: 3 credits • Premium: 5 credits</p>
               <div className="text-lg font-bold text-purple-600">
-                1 Credit <span className="text-sm font-normal">($5 value)</span>
+                $3.00 <span className="text-sm font-normal">/ $5.00</span>
               </div>
+            </div>
+
+            {/* Premium Direct Payment */}
+            <div className="p-3 border rounded-lg border-orange-200">
+              <div className="flex items-center gap-2 mb-2">
+                <CreditCard className="h-4 w-4" />
+                <span className="font-medium">Direct Payment</span>
+              </div>
+              <p className="text-sm text-muted-foreground mb-2">Bulk: $3 • Premium: $10</p>
+              <div className="text-lg font-bold text-orange-600">$3.00 / $10.00</div>
             </div>
           </div>
 
-          {/* Premium Direct Payment */}
-          <div className="p-3 border rounded-lg border-orange-200">
-            <div className="flex items-center gap-2 mb-2">
-              <CreditCard className="h-4 w-4" />
-              <span className="font-medium">Premium Per Article</span>
+          {/* Premium Option */}
+          <div className="mt-4 p-4 border rounded-lg border-orange-200 bg-orange-50">
+            <h4 className="font-medium mb-2 flex items-center gap-2">
+              <Sparkles className="h-4 w-4" />
+              Premium Articles
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="text-center p-2 border rounded bg-white">
+                <div className="text-sm text-muted-foreground">With Credits</div>
+                <div className="text-lg font-bold text-purple-600">5 Credits</div>
+                <div className="text-xs text-muted-foreground">($5.00 value)</div>
+              </div>
+              <div className="text-center p-2 border rounded bg-white">
+                <div className="text-sm text-muted-foreground">Direct Payment</div>
+                <div className="text-lg font-bold text-orange-600">$10.00</div>
+                <div className="text-xs text-muted-foreground">Premium rate</div>
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground mb-2">No credits or API key required</p>
-            <div className="text-lg font-bold text-orange-600">$10.00</div>
           </div>
 
           {/* Buy Credits Button */}

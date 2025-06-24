@@ -157,14 +157,22 @@ export default function ContentWriter() {
   const getPrice = () => {
     if (canGenerateFree()) return 0;
     if (user.hasOwnApiKey) return 1;
-    // Premium pricing: $5 with credits, $10 without credits
-    return user.credits > 0 ? 5 : 10;
+    // Bulk articles without API key: $3, Premium articles: $10
+    return 3; // Default to bulk pricing, premium will be separate
   };
 
   const getCreditCost = () => {
     if (canGenerateFree()) return 0;
-    if (user.hasOwnApiKey) return 1; // 1 credit with API key
-    return 1; // 1 credit for premium ($5 value)
+    if (user.hasOwnApiKey) return 1; // 1 credit = $1 with API key
+    return 3; // 3 credits = $3 for bulk without API key
+  };
+
+  const getPremiumPrice = () => {
+    return user.credits >= 5 ? 5 : 10; // 5 credits or $10
+  };
+
+  const getPremiumCreditCost = () => {
+    return 5; // 5 credits for premium articles
   };
 
   const getFreeRemaining = () => {

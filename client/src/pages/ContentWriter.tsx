@@ -134,7 +134,7 @@ export default function ContentWriter() {
       setShowApiKeyForm(false);
       toast({
         title: "API Keys Saved",
-        description: "You now get 10 free articles and $1/article pricing!"
+        description: "You now get 4 free articles and $1/article pricing!"
       });
     }
   });
@@ -149,7 +149,7 @@ export default function ContentWriter() {
 
   const canGenerateFree = () => {
     if (user.freeArticlesUsed === 0) return true; // First article always free
-    if (user.hasOwnApiKey && user.freeArticlesUsed < 10) return true; // 10 free with API key
+    if (user.hasOwnApiKey && user.freeArticlesUsed < 4) return true; // 4 free with API key
     return false;
   };
 
@@ -160,7 +160,7 @@ export default function ContentWriter() {
 
   const getFreeRemaining = () => {
     if (user.freeArticlesUsed === 0) return "First article free!";
-    if (user.hasOwnApiKey) return `${10 - user.freeArticlesUsed} free articles remaining`;
+    if (user.hasOwnApiKey) return `${4 - user.freeArticlesUsed} free articles remaining`;
     return "No free articles remaining";
   };
 
@@ -606,7 +606,7 @@ export default function ContentWriter() {
                   <div className="text-center space-y-2">
                     <ShieldCheck className="h-8 w-8 text-green-500 mx-auto" />
                     <p className="font-medium text-green-600">API Keys Active</p>
-                    <p className="text-sm text-muted-foreground">10 free articles, $1/article after</p>
+                    <p className="text-sm text-muted-foreground">4 free articles, $1/article after</p>
                   </div>
                 )}
               </CardContent>

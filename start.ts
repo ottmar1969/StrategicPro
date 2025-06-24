@@ -3050,10 +3050,15 @@ Status: \${consultation.forwarded ? 'Forwarded to ' + consultation.forwardedTo :
   res.send(htmlContent);
 });
 
+// Link analysis routes
+const linkAnalysisRoutes = require('./server/link-analysis').default;
+app.use('/api/links', linkAnalysisRoutes);
+
 // Start server
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`ContentScale server running on port ${PORT}`);
   console.log(`Health check: http://localhost:${PORT}/health`);
   console.log(`Landing page: http://localhost:${PORT}`);
   console.log(`Admin access: http://localhost:${PORT}/admin/download`);
+  console.log(`Link analysis: http://localhost:${PORT}/api/links/analyze-links`);
 });

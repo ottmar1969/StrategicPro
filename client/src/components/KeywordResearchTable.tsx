@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, Search, Plus, Globe, TrendingUp, Target, FileText, ExternalLink, Trash2 } from "lucide-react";
+import LinkAnalysisPanel from "@/components/LinkAnalysisPanel";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -56,9 +57,7 @@ export default function KeywordResearchTable() {
   const [selectedTitle, setSelectedTitle] = useState("");
   const [selectedWebsite, setSelectedWebsite] = useState("");
   const [websites, setWebsites] = useState([
-    "contentscale.site",
-    "example.com",
-    "mywebsite.com"
+    "contentscale.site"
   ]);
   const [newWebsiteUrl, setNewWebsiteUrl] = useState("");
   const [showAddWebsite, setShowAddWebsite] = useState(false);
@@ -241,6 +240,10 @@ export default function KeywordResearchTable() {
       setShowAddWebsite(true);
     } else {
       setSelectedWebsite(value);
+      toast({
+        title: "Website Selected",
+        description: `Now analyzing content for ${value}`
+      });
     }
   };
 
@@ -348,19 +351,16 @@ export default function KeywordResearchTable() {
         <CardContent>
           <Select value={selectedWebsite} onValueChange={handleWebsiteSelect}>
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Add new website..." />
+              <SelectValue placeholder="Select a website or add new..." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="none" disabled className="text-muted-foreground">
-                None
-              </SelectItem>
               {websites.map((website) => (
                 <SelectItem key={website} value={website}>
                   {website}
                 </SelectItem>
               ))}
               <SelectItem value="add_new" className="text-blue-600 font-medium">
-                Add new website...
+                + Add new website...
               </SelectItem>
             </SelectContent>
           </Select>
@@ -775,6 +775,25 @@ export default function KeywordResearchTable() {
                 Select a title to generate content outlines
               </p>
             )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Link Analysis Section */}
+      {selectedWebsite && mainKeyword && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ExternalLink className="h-5 w-5" />
+              Link Analysis & Strategy
+              <Badge variant="outline" className="ml-2">AI-Powered</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <LinkAnalysisPanel 
+              keyword={mainKeyword}
+              selectedWebsite={selectedWebsite}
+            />
           </CardContent>
         </Card>
       )}

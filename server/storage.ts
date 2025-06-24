@@ -1,206 +1,195 @@
-interface Consultation {
-  id: string;
-  category: string;
-  businessName: string;
-  industry: string;
-  description: string;
-  specificChallenges: string[];
-  goals: string[];
-  timeline: string;
-  budget: string;
-  createdAt: string;
-  status: 'pending' | 'in_progress' | 'completed';
+import { 
+  generatedContent, 
+  keywordSessions, 
+  consultations, 
+  userWebsites, 
+  fraudDetection,
+  type GeneratedContent,
+  type KeywordSession,
+  type Consultation,
+  type UserWebsite,
+  type InsertGeneratedContent,
+  type InsertKeywordSession,
+  type InsertConsultation,
+  type InsertUserWebsite
+} from "@shared/schema";
+import { db } from "./db";
+import { eq, and, desc } from "drizzle-orm";
+import { generateFingerprint, detectVPN, detectProxy, calculateRiskScore, isSuspiciousActivity } from "./fingerprint";
+import type { Request } from "express";
+
+export interface IStorage {
+  // Content operations
+  saveGeneratedContent(fingerprint: string, content: Omit<InsertGeneratedContent, 'fingerprint'>): Promise<GeneratedContent>;
+  getUserContent(fingerprint: string): Promise<GeneratedContent[]>;
+  getContentById(id: string, fingerprint: string): Promise<GeneratedContent | null>;
+  
+  // Keyword research operations
+  saveKeywordSession(fingerprint: string, session: Omit<InsertKeywordSession, 'fingerprint'>): Promise<KeywordSession>;
+  getUserKeywordSessions(fingerprint: string): Promise<KeywordSession[]>;
+  
+  // Consultation operations
+  saveConsultation(fingerprint: string, consultation: Omit<InsertConsultation, 'fingerprint'>): Promise<Consultation>;
+  getUserConsultations(fingerprint: string): Promise<Consultation[]>;
+  
+  // Website operations
+  saveUserWebsite(fingerprint: string, website: Omit<InsertUserWebsite, 'fingerprint'>): Promise<UserWebsite>;
+  getUserWebsites(fingerprint: string): Promise<UserWebsite[]>;
+  
+  // Fraud detection
+  trackRequest(req: Request): Promise<boolean>; // Returns true if allowed, false if blocked
+  getFraudStatus(fingerprint: string): Promise<any>;
 }
 
-interface Analysis {
-  id: string;
-  consultationId: string;
-  category: string;
-  analysis: string;
-  recommendations: string[];
-  createdAt: string;
-  status: 'completed' | 'failed';
-}
-
-interface BusinessProfile {
-  id: string;
-  name: string;
-  industry: string;
-  size: string;
-  description: string;
-  challenges: string[];
-  goals: string[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-class InMemoryStorage {
-  private consultations: Map<string, Consultation> = new Map();
-  private analyses: Map<string, Analysis> = new Map();
-  private businessProfiles: Map<string, BusinessProfile> = new Map();
-
-  // Consultation methods
-  async createConsultation(data: Omit<Consultation, 'id' | 'createdAt' | 'status'>): Promise<Consultation> {
-    const consultation: Consultation = {
-      ...data,
-      id: `consultation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      createdAt: new Date().toISOString(),
-      status: 'pending'
-    };
-
-    this.consultations.set(consultation.id, consultation);
-    return consultation;
+export class DatabaseStorage implements IStorage {
+  async saveGeneratedContent(fingerprint: string, content: Omit<InsertGeneratedContent, 'fingerprint'>): Promise<GeneratedContent> {
+    const [result] = await db
+      .insert(generatedContent)
+      .values({ ...content, fingerprint })
+      .returning();
+    return result;
   }
 
-  async getConsultation(id: string): Promise<Consultation | null> {
-    return this.consultations.get(id) || null;
+  async getUserContent(fingerprint: string): Promise<GeneratedContent[]> {
+    return await db
+      .select()
+      .from(generatedContent)
+      .where(eq(generatedContent.fingerprint, fingerprint))
+      .orderBy(desc(generatedContent.createdAt));
   }
 
-  async getConsultations(): Promise<Consultation[]> {
-    return Array.from(this.consultations.values()).sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+  async getContentById(id: string, fingerprint: string): Promise<GeneratedContent | null> {
+    const [result] = await db
+      .select()
+      .from(generatedContent)
+      .where(and(
+        eq(generatedContent.id, id),
+        eq(generatedContent.fingerprint, fingerprint)
+      ));
+    return result || null;
   }
 
-  async updateConsultationStatus(id: string, status: Consultation['status']): Promise<boolean> {
-    const consultation = this.consultations.get(id);
-    if (!consultation) return false;
-
-    consultation.status = status;
-    this.consultations.set(id, consultation);
-    return true;
+  async saveKeywordSession(fingerprint: string, session: Omit<InsertKeywordSession, 'fingerprint'>): Promise<KeywordSession> {
+    const [result] = await db
+      .insert(keywordSessions)
+      .values({ ...session, fingerprint })
+      .returning();
+    return result;
   }
 
-  // Analysis methods
-  async saveAnalysis(consultationId: string, analysisData: Omit<Analysis, 'consultationId'>): Promise<Analysis> {
-    const analysis: Analysis = {
-      ...analysisData,
-      consultationId
-    };
-
-    this.analyses.set(analysis.id, analysis);
-    
-    // Update consultation status
-    await this.updateConsultationStatus(consultationId, 'completed');
-    
-    return analysis;
+  async getUserKeywordSessions(fingerprint: string): Promise<KeywordSession[]> {
+    return await db
+      .select()
+      .from(keywordSessions)
+      .where(eq(keywordSessions.fingerprint, fingerprint))
+      .orderBy(desc(keywordSessions.createdAt));
   }
 
-  async getAnalysis(consultationId: string): Promise<Analysis | null> {
-    for (const analysis of this.analyses.values()) {
-      if (analysis.consultationId === consultationId) {
-        return analysis;
-      }
-    }
-    return null;
+  async saveConsultation(fingerprint: string, consultation: Omit<InsertConsultation, 'fingerprint'>): Promise<Consultation> {
+    const [result] = await db
+      .insert(consultations)
+      .values({ ...consultation, fingerprint })
+      .returning();
+    return result;
   }
 
-  async getAllAnalyses(): Promise<Analysis[]> {
-    return Array.from(this.analyses.values()).sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+  async getUserConsultations(fingerprint: string): Promise<Consultation[]> {
+    return await db
+      .select()
+      .from(consultations)
+      .where(eq(consultations.fingerprint, fingerprint))
+      .orderBy(desc(consultations.createdAt));
   }
 
-  // Business Profile methods
-  async createBusinessProfile(data: Omit<BusinessProfile, 'id' | 'createdAt' | 'updatedAt'>): Promise<BusinessProfile> {
-    const profile: BusinessProfile = {
-      ...data,
-      id: `profile_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-
-    this.businessProfiles.set(profile.id, profile);
-    return profile;
+  async saveUserWebsite(fingerprint: string, website: Omit<InsertUserWebsite, 'fingerprint'>): Promise<UserWebsite> {
+    const [result] = await db
+      .insert(userWebsites)
+      .values({ ...website, fingerprint })
+      .returning();
+    return result;
   }
 
-  async getBusinessProfile(id: string): Promise<BusinessProfile | null> {
-    return this.businessProfiles.get(id) || null;
+  async getUserWebsites(fingerprint: string): Promise<UserWebsite[]> {
+    return await db
+      .select()
+      .from(userWebsites)
+      .where(and(
+        eq(userWebsites.fingerprint, fingerprint),
+        eq(userWebsites.isActive, true)
+      ));
   }
 
-  async getBusinessProfiles(): Promise<BusinessProfile[]> {
-    return Array.from(this.businessProfiles.values()).sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-  }
+  async trackRequest(req: Request): Promise<boolean> {
+    const fingerprintData = generateFingerprint(req);
+    const { fingerprint, ipAddress, userAgent } = fingerprintData;
 
-  async updateBusinessProfile(id: string, updates: Partial<Omit<BusinessProfile, 'id' | 'createdAt'>>): Promise<BusinessProfile | null> {
-    const profile = this.businessProfiles.get(id);
-    if (!profile) return null;
+    // Check existing fraud record
+    const [existing] = await db
+      .select()
+      .from(fraudDetection)
+      .where(eq(fraudDetection.fingerprint, fingerprint));
 
-    const updatedProfile: BusinessProfile = {
-      ...profile,
-      ...updates,
-      updatedAt: new Date().toISOString()
-    };
+    const vpnDetected = detectVPN(ipAddress);
+    const proxyDetected = detectProxy(userAgent, req.headers);
 
-    this.businessProfiles.set(id, updatedProfile);
-    return updatedProfile;
-  }
+    if (existing) {
+      // Calculate time since last activity
+      const timeDiff = Date.now() - (existing.lastActivity?.getTime() || Date.now());
+      const minutesSinceLastActivity = timeDiff / (1000 * 60);
 
-  async deleteBusinessProfile(id: string): Promise<boolean> {
-    return this.businessProfiles.delete(id);
-  }
+      // Calculate risk score
+      const riskScore = calculateRiskScore({
+        requestCount: (existing.requestCount || 0) + 1,
+        contentGenerated: existing.contentGenerated || 0,
+        creditsUsed: existing.creditsUsed || 0,
+        vpnDetected,
+        proxyDetected,
+        recentActivity: minutesSinceLastActivity
+      });
 
-  // Statistics and reporting
-  async getStatistics() {
-    const consultationsByCategory = new Map<string, number>();
-    const consultationsByStatus = new Map<string, number>();
+      const suspicious = isSuspiciousActivity(riskScore);
 
-    for (const consultation of this.consultations.values()) {
-      // Count by category
-      const categoryCount = consultationsByCategory.get(consultation.category) || 0;
-      consultationsByCategory.set(consultation.category, categoryCount + 1);
+      // Update existing record
+      await db
+        .update(fraudDetection)
+        .set({
+          requestCount: (existing.requestCount || 0) + 1,
+          suspiciousActivity: suspicious,
+          vpnDetected,
+          proxyDetected,
+          lastActivity: new Date()
+        })
+        .where(eq(fraudDetection.fingerprint, fingerprint));
 
-      // Count by status
-      const statusCount = consultationsByStatus.get(consultation.status) || 0;
-      consultationsByStatus.set(consultation.status, statusCount + 1);
-    }
+      // Block if suspicious
+      return !suspicious;
+    } else {
+      // Create new fraud detection record
+      await db
+        .insert(fraudDetection)
+        .values({
+          id: `fraud_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`,
+          fingerprint,
+          ipAddress,
+          userAgent,
+          requestCount: 1,
+          vpnDetected,
+          proxyDetected,
+          suspiciousActivity: false,
+          lastActivity: new Date()
+        });
 
-    return {
-      totalConsultations: this.consultations.size,
-      totalAnalyses: this.analyses.size,
-      totalBusinessProfiles: this.businessProfiles.size,
-      consultationsByCategory: Object.fromEntries(consultationsByCategory),
-      consultationsByStatus: Object.fromEntries(consultationsByStatus),
-      lastUpdated: new Date().toISOString()
-    };
-  }
-
-  // Data export/import for backups
-  async exportData() {
-    return {
-      consultations: Array.from(this.consultations.entries()),
-      analyses: Array.from(this.analyses.entries()),
-      businessProfiles: Array.from(this.businessProfiles.entries()),
-      exportedAt: new Date().toISOString()
-    };
-  }
-
-  async importData(data: any) {
-    try {
-      if (data.consultations) {
-        this.consultations = new Map(data.consultations);
-      }
-      if (data.analyses) {
-        this.analyses = new Map(data.analyses);
-      }
-      if (data.businessProfiles) {
-        this.businessProfiles = new Map(data.businessProfiles);
-      }
-      return true;
-    } catch (error) {
-      console.error('Error importing data:', error);
-      return false;
+      return true; // Allow first request
     }
   }
 
-  // Clear all data (for testing/reset)
-  async clearAllData() {
-    this.consultations.clear();
-    this.analyses.clear();
-    this.businessProfiles.clear();
+  async getFraudStatus(fingerprint: string): Promise<any> {
+    const [result] = await db
+      .select()
+      .from(fraudDetection)
+      .where(eq(fraudDetection.fingerprint, fingerprint));
+    return result;
   }
 }
 
-export const storage = new InMemoryStorage();
+export const storage = new DatabaseStorage();

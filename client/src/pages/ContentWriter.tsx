@@ -19,6 +19,7 @@ import PricingDisplay from "@/components/PricingDisplay";
 import PaymentExplanation from "@/components/PaymentExplanation";
 import GeneratedContentDisplay from "@/components/GeneratedContentDisplay";
 import LoadingAnimation from "@/components/LoadingAnimation";
+import SecurityNotice from "@/components/SecurityNotice";
 
 const ContentGenerationSchema = z.object({
   topic: z.string().min(5, "Topic must be at least 5 characters"),
@@ -79,6 +80,7 @@ export default function ContentWriter() {
   const [apiKeys, setApiKeys] = useState({ openai: "", gemini: "" });
   const [selectedModel, setSelectedModel] = useState("default");
   const [showPaymentExplanation, setShowPaymentExplanation] = useState(false);
+  const [fraudStatus, setFraudStatus] = useState<any>(null);
   const { toast } = useToast();
 
   const form = useForm<ContentFormData>({
@@ -96,11 +98,12 @@ export default function ContentWriter() {
     }
   });
 
-  // Check user eligibility
+  // Check user eligibility and fraud status
   const eligibilityMutation = useMutation({
     mutationFn: () => apiRequest("/api/content/check-eligibility", { method: "POST" }),
     onSuccess: (data) => {
       setUser(data.user);
+      setFraudStatus(data.fraudStatus);
     }
   });
 
@@ -237,6 +240,11 @@ export default function ContentWriter() {
           </TabsContent>
 
           <TabsContent value="generator" className="mt-6">
+            {/* Security Notice */}
+            <div className="mb-6">
+              <SecurityNotice fraudStatus={fraudStatus} />
+            </div>
+
             {/* Pricing Display - Full Width at Top */}
             <div className="mb-8">
               <PricingDisplay 

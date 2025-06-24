@@ -138,16 +138,29 @@ export default function PricingDisplay({ user, onBuyCredits }: PricingDisplayPro
             </div>
           </div>
 
-          {/* Buy Credits Button */}
-          {user.credits === 0 && !user.hasOwnApiKey && (
+          {/* Action Buttons */}
+          <div className="flex gap-2">
+            {user.credits === 0 && !user.hasOwnApiKey && (
+              <Button 
+                onClick={onBuyCredits}
+                className="flex-1 bg-purple-600 hover:bg-purple-700"
+              >
+                <Coins className="h-4 w-4 mr-2" />
+                Buy Credits
+              </Button>
+            )}
             <Button 
-              onClick={onBuyCredits}
-              className="w-full bg-purple-600 hover:bg-purple-700"
+              variant="outline" 
+              onClick={() => {
+                // Navigate to pricing guide tab
+                const pricingTab = document.querySelector('[data-state="inactive"][value="pricing"]') as HTMLElement;
+                if (pricingTab) pricingTab.click();
+              }}
+              className="flex-1"
             >
-              <Coins className="h-4 w-4 mr-2" />
-              Buy Credits for 50% Savings
+              Learn More
             </Button>
-          )}
+          </div>
         </div>
       </CardContent>
     </Card>

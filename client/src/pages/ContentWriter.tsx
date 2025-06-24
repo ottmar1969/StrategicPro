@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import KeywordResearchTable from "@/components/KeywordResearchTable";
 import PricingDisplay from "@/components/PricingDisplay";
+import PaymentExplanation from "@/components/PaymentExplanation";
 
 const ContentGenerationSchema = z.object({
   topic: z.string().min(5, "Topic must be at least 5 characters"),
@@ -75,6 +76,7 @@ export default function ContentWriter() {
   const [showApiKeyInfo, setShowApiKeyInfo] = useState(false);
   const [apiKeys, setApiKeys] = useState({ openai: "", gemini: "" });
   const [selectedModel, setSelectedModel] = useState("default");
+  const [showPaymentExplanation, setShowPaymentExplanation] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<ContentFormData>({
@@ -213,7 +215,7 @@ export default function ContentWriter() {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="research" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="research" className="flex items-center gap-2">
               <Search className="h-4 w-4" />
               Super AI Research
@@ -221,6 +223,10 @@ export default function ContentWriter() {
             <TabsTrigger value="generator" className="flex items-center gap-2">
               <Sparkles className="h-4 w-4" />
               Content Generator
+            </TabsTrigger>
+            <TabsTrigger value="pricing" className="flex items-center gap-2">
+              <CreditCard className="h-4 w-4" />
+              Pricing Guide
             </TabsTrigger>
           </TabsList>
 
@@ -745,6 +751,10 @@ export default function ContentWriter() {
             </CardContent>
           </Card>
         )}
+          </TabsContent>
+
+          <TabsContent value="pricing" className="mt-6">
+            <PaymentExplanation />
           </TabsContent>
         </Tabs>
       </div>

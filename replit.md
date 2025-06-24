@@ -106,6 +106,13 @@ SESSION_SECRET=your_session_secret
 
 ## Recent Changes
 
+- **June 24, 2025**: Fixed website selection dropdown in keyword research interface
+  - Added working "Select a Website" dropdown with proper UI components
+  - Implemented website management with contentscale.site pre-loaded
+  - Added "Add new website..." functionality with modal dialog
+  - Enhanced user experience with visual confirmation and validation
+  - Deployed comprehensive payment explanation system with pricing guide tab
+
 - **June 23, 2025**: Enhanced keyword research system with Google AI Mode and AI Overview optimization
   - Added Perplexity API integration for real-time fact-checking and online investigation
   - Implemented AI Overview trigger potential scoring for keywords

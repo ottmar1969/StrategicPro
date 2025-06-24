@@ -4,7 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Search, Plus, Globe, TrendingUp, Target, FileText } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Loader2, Search, Plus, Globe, TrendingUp, Target, FileText, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -50,6 +53,14 @@ export default function KeywordResearchTable() {
   const [titles, setTitles] = useState<TitleData[]>([]);
   const [outlines, setOutlines] = useState<OutlineData[]>([]);
   const [selectedTitle, setSelectedTitle] = useState("");
+  const [selectedWebsite, setSelectedWebsite] = useState("");
+  const [websites, setWebsites] = useState([
+    "contentscale.site",
+    "example.com",
+    "mywebsite.com"
+  ]);
+  const [newWebsiteUrl, setNewWebsiteUrl] = useState("");
+  const [showAddWebsite, setShowAddWebsite] = useState(false);
   const { toast } = useToast();
 
   // Generate Keywords
@@ -184,8 +195,96 @@ export default function KeywordResearchTable() {
     }
   };
 
+  const handleAddWebsite = () => {
+    if (newWebsiteUrl && !websites.includes(newWebsiteUrl)) {
+      setWebsites(prev => [...prev, newWebsiteUrl]);
+      setSelectedWebsite(newWebsiteUrl);
+      setNewWebsiteUrl("");
+      setShowAddWebsite(false);
+      toast({
+        title: "Website Added",
+        description: `${newWebsiteUrl} has been added to your website list`
+      });
+    }
+  };
+
+  const handleWebsiteSelect = (value: string) => {
+    if (value === "add_new") {
+      setShowAddWebsite(true);
+    } else {
+      setSelectedWebsite(value);
+    }
+  };
+
   return (
     <div className="space-y-6">
+      {/* Website Selection */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Globe className="h-5 w-5" />
+            Select a Website
+            <Badge variant="outline" className="ml-2">Unlimited internal URLs crawlable</Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Select value={selectedWebsite} onValueChange={handleWebsiteSelect}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Add new website..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none" disabled className="text-muted-foreground">
+                None
+              </SelectItem>
+              {websites.map((website) => (
+                <SelectItem key={website} value={website}>
+                  {website}
+                </SelectItem>
+              ))}
+              <SelectItem value="add_new" className="text-blue-600 font-medium">
+                Add new website...
+              </SelectItem>
+            </SelectContent>
+          </Select>
+          
+          {selectedWebsite && selectedWebsite !== "add_new" && (
+            <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+              <ExternalLink className="h-3 w-3" />
+              <span>Selected: {selectedWebsite}</span>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Add Website Dialog */}
+      <Dialog open={showAddWebsite} onOpenChange={setShowAddWebsite}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Website</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="website-url">Website URL</Label>
+              <Input
+                id="website-url"
+                placeholder="e.g., mywebsite.com"
+                value={newWebsiteUrl}
+                onChange={(e) => setNewWebsiteUrl(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowAddWebsite(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleAddWebsite} disabled={!newWebsiteUrl}>
+                Add Website
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Main Keyword Input */}
       <Card>
         <CardHeader>

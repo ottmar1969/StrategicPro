@@ -7,7 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Loader2, Search, Plus, Globe, TrendingUp, Target, FileText, ExternalLink } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Loader2, Search, Plus, Globe, TrendingUp, Target, FileText, ExternalLink, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -61,6 +62,9 @@ export default function KeywordResearchTable() {
   ]);
   const [newWebsiteUrl, setNewWebsiteUrl] = useState("");
   const [showAddWebsite, setShowAddWebsite] = useState(false);
+  const [selectedKeywords, setSelectedKeywords] = useState<number[]>([]);
+  const [selectedTitles, setSelectedTitles] = useState<number[]>([]);
+  const [selectedOutlines, setSelectedOutlines] = useState<number[]>([]);
   const { toast } = useToast();
 
   // Generate Keywords
@@ -240,6 +244,96 @@ export default function KeywordResearchTable() {
     }
   };
 
+  // Row selection handlers
+  const handleKeywordSelect = (index: number, selected: boolean) => {
+    if (selected) {
+      setSelectedKeywords(prev => [...prev, index]);
+    } else {
+      setSelectedKeywords(prev => prev.filter(i => i !== index));
+    }
+  };
+
+  const handleTitleSelect = (index: number, selected: boolean) => {
+    if (selected) {
+      setSelectedTitles(prev => [...prev, index]);
+    } else {
+      setSelectedTitles(prev => prev.filter(i => i !== index));
+    }
+  };
+
+  const handleOutlineSelect = (index: number, selected: boolean) => {
+    if (selected) {
+      setSelectedOutlines(prev => [...prev, index]);
+    } else {
+      setSelectedOutlines(prev => prev.filter(i => i !== index));
+    }
+  };
+
+  // Delete handlers
+  const handleDeleteKeywords = () => {
+    if (selectedKeywords.length === 0) return;
+    
+    const newKeywords = keywords.filter((_, index) => !selectedKeywords.includes(index));
+    setKeywords(newKeywords);
+    setSelectedKeywords([]);
+    
+    toast({
+      title: "Keywords Deleted",
+      description: `Removed ${selectedKeywords.length} keyword${selectedKeywords.length > 1 ? 's' : ''}`
+    });
+  };
+
+  const handleDeleteTitles = () => {
+    if (selectedTitles.length === 0) return;
+    
+    const newTitles = titles.filter((_, index) => !selectedTitles.includes(index));
+    setTitles(newTitles);
+    setSelectedTitles([]);
+    
+    toast({
+      title: "Titles Deleted",
+      description: `Removed ${selectedTitles.length} title${selectedTitles.length > 1 ? 's' : ''}`
+    });
+  };
+
+  const handleDeleteOutlines = () => {
+    if (selectedOutlines.length === 0) return;
+    
+    const newOutlines = outlines.filter((_, index) => !selectedOutlines.includes(index));
+    setOutlines(newOutlines);
+    setSelectedOutlines([]);
+    
+    toast({
+      title: "Outlines Deleted",
+      description: `Removed ${selectedOutlines.length} outline${selectedOutlines.length > 1 ? 's' : ''}`
+    });
+  };
+
+  // Select all handlers
+  const handleSelectAllKeywords = (selected: boolean) => {
+    if (selected) {
+      setSelectedKeywords(keywords.map((_, index) => index));
+    } else {
+      setSelectedKeywords([]);
+    }
+  };
+
+  const handleSelectAllTitles = (selected: boolean) => {
+    if (selected) {
+      setSelectedTitles(titles.map((_, index) => index));
+    } else {
+      setSelectedTitles([]);
+    }
+  };
+
+  const handleSelectAllOutlines = (selected: boolean) => {
+    if (selected) {
+      setSelectedOutlines(outlines.map((_, index) => index));
+    } else {
+      setSelectedOutlines([]);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Website Selection */}
@@ -367,22 +461,45 @@ export default function KeywordResearchTable() {
             <CardTitle className="flex items-center gap-2">
               <Target className="h-5 w-5" />
               Keywords ({keywords.length})
+              {selectedKeywords.length > 0 && (
+                <Badge variant="secondary" className="ml-2">
+                  {selectedKeywords.length} selected
+                </Badge>
+              )}
             </CardTitle>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => handleGenerate('keywords', 10)}
-              disabled={keywordMutation.isPending}
-            >
-              <Plus className="h-4 w-4 mr-1" />
-              Add Row
-            </Button>
+            <div className="flex gap-2">
+              {selectedKeywords.length > 0 && (
+                <Button 
+                  variant="destructive" 
+                  size="sm"
+                  onClick={handleDeleteKeywords}
+                >
+                  <Trash2 className="h-4 w-4 mr-1" />
+                  Delete ({selectedKeywords.length})
+                </Button>
+              )}
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => handleGenerate('keywords', 10)}
+                disabled={keywordMutation.isPending}
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Add Row
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="border-b">
+                    <th className="w-10 p-2">
+                      <Checkbox
+                        checked={selectedKeywords.length === keywords.length && keywords.length > 0}
+                        onCheckedChange={handleSelectAllKeywords}
+                      />
+                    </th>
                     <th className="text-left p-2">Keyword</th>
                     <th className="text-left p-2">Volume</th>
                     <th className="text-left p-2">Difficulty</th>
@@ -393,7 +510,13 @@ export default function KeywordResearchTable() {
                 </thead>
                 <tbody>
                   {keywords.map((keyword, index) => (
-                    <tr key={index} className="border-b hover:bg-muted/50">
+                    <tr key={index} className={`border-b hover:bg-muted/50 ${selectedKeywords.includes(index) ? 'bg-blue-50' : ''}`}>
+                      <td className="p-2">
+                        <Checkbox
+                          checked={selectedKeywords.includes(index)}
+                          onCheckedChange={(checked) => handleKeywordSelect(index, checked as boolean)}
+                        />
+                      </td>
                       <td className="p-2 font-medium">{keyword.keyword}</td>
                       <td className="p-2">{keyword.searchVolume}</td>
                       <td className="p-2">
@@ -435,8 +558,23 @@ export default function KeywordResearchTable() {
             <CardTitle className="flex items-center gap-2">
               <FileText className="h-5 w-5" />
               Titles ({titles.length})
+              {selectedTitles.length > 0 && (
+                <Badge variant="secondary" className="ml-2">
+                  {selectedTitles.length} selected
+                </Badge>
+              )}
             </CardTitle>
             <div className="flex gap-2">
+              {selectedTitles.length > 0 && (
+                <Button 
+                  variant="destructive" 
+                  size="sm"
+                  onClick={handleDeleteTitles}
+                >
+                  <Trash2 className="h-4 w-4 mr-1" />
+                  Delete ({selectedTitles.length})
+                </Button>
+              )}
               <Button 
                 onClick={() => handleGenerate('titles', 1)}
                 disabled={titleMutation.isPending}
@@ -464,16 +602,31 @@ export default function KeywordResearchTable() {
           <CardContent>
             {titles.length > 0 ? (
               <div className="space-y-3">
+                <div className="flex items-center gap-2 mb-3 p-2 bg-gray-50 rounded">
+                  <Checkbox
+                    checked={selectedTitles.length === titles.length && titles.length > 0}
+                    onCheckedChange={handleSelectAllTitles}
+                  />
+                  <span className="text-sm font-medium">Select All</span>
+                </div>
                 {titles.map((title, index) => (
                   <div 
                     key={index} 
-                    className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+                    className={`p-3 border rounded-lg transition-colors ${
+                      selectedTitles.includes(index) ? 'border-blue-500 bg-blue-50' : 
                       selectedTitle === title.title ? 'border-purple-500 bg-purple-50' : 'hover:bg-muted/50'
                     }`}
-                    onClick={() => setSelectedTitle(title.title)}
                   >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
+                    <div className="flex items-start gap-3">
+                      <Checkbox
+                        checked={selectedTitles.includes(index)}
+                        onCheckedChange={(checked) => handleTitleSelect(index, checked as boolean)}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                      <div 
+                        className="flex-1 cursor-pointer"
+                        onClick={() => setSelectedTitle(title.title)}
+                      >
                         <h4 className="font-medium">{title.title}</h4>
                         <p className="text-sm text-muted-foreground mt-1">{title.reasoning}</p>
                       </div>
@@ -510,8 +663,23 @@ export default function KeywordResearchTable() {
             <CardTitle className="flex items-center gap-2">
               <FileText className="h-5 w-5" />
               Outlines ({outlines.length})
+              {selectedOutlines.length > 0 && (
+                <Badge variant="secondary" className="ml-2">
+                  {selectedOutlines.length} selected
+                </Badge>
+              )}
             </CardTitle>
             <div className="flex gap-2">
+              {selectedOutlines.length > 0 && (
+                <Button 
+                  variant="destructive" 
+                  size="sm"
+                  onClick={handleDeleteOutlines}
+                >
+                  <Trash2 className="h-4 w-4 mr-1" />
+                  Delete ({selectedOutlines.length})
+                </Button>
+              )}
               <Button 
                 onClick={() => handleGenerate('outlines', 1)}
                 disabled={outlineMutation.isPending}
@@ -539,48 +707,65 @@ export default function KeywordResearchTable() {
           <CardContent>
             {outlines.length > 0 ? (
               <div className="space-y-4">
+                <div className="flex items-center gap-2 mb-3 p-2 bg-gray-50 rounded">
+                  <Checkbox
+                    checked={selectedOutlines.length === outlines.length && outlines.length > 0}
+                    onCheckedChange={handleSelectAllOutlines}
+                  />
+                  <span className="text-sm font-medium">Select All</span>
+                </div>
                 {outlines.map((outline, index) => (
-                  <div key={index} className="p-4 border rounded-lg">
-                    <h4 className="font-medium mb-3">{outline.heading}</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <h5 className="font-medium text-sm mb-2">Structure:</h5>
-                        <ul className="text-sm space-y-1">
-                          {outline.subheadings.map((sub, subIndex) => (
-                            <li key={subIndex} className="flex items-center gap-2">
-                              <div className="w-1 h-1 bg-current rounded-full" />
-                              {sub}
-                            </li>
-                          ))}
-                        </ul>
+                  <div key={index} className={`p-4 border rounded-lg transition-colors ${
+                    selectedOutlines.includes(index) ? 'border-blue-500 bg-blue-50' : 'hover:bg-muted/50'
+                  }`}>
+                    <div className="flex items-start gap-3">
+                      <Checkbox
+                        checked={selectedOutlines.includes(index)}
+                        onCheckedChange={(checked) => handleOutlineSelect(index, checked as boolean)}
+                      />
+                      <div className="flex-1">
+                        <h4 className="font-medium mb-3">{outline.heading}</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <h5 className="font-medium text-sm mb-2">Structure:</h5>
+                            <ul className="text-sm space-y-1">
+                              {outline.subheadings.map((sub, subIndex) => (
+                                <li key={subIndex} className="flex items-center gap-2">
+                                  <div className="w-1 h-1 bg-current rounded-full" />
+                                  {sub}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          <div>
+                            <h5 className="font-medium text-sm mb-2">Key Points:</h5>
+                            <ul className="text-sm space-y-1">
+                              {outline.keyPoints.map((point, pointIndex) => (
+                                <li key={pointIndex} className="flex items-center gap-2">
+                                  <div className="w-1 h-1 bg-current rounded-full" />
+                                  {point}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                        <div className="mt-3 space-y-2">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <Globe className="h-4 w-4 text-green-600" />
+                            <span className="text-sm text-green-600">AI Overview Optimized</span>
+                            <Badge variant="outline" className="text-xs">
+                              {outline.sources.length} Sources
+                            </Badge>
+                            <Badge variant="outline" className="text-xs bg-blue-100 text-blue-800">
+                              {outline.featuredSnippetSections.length} Snippet Sections
+                            </Badge>
+                            <Badge variant="outline" className="text-xs bg-purple-100 text-purple-800">
+                              {outline.faqSections.length} FAQ Items
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground">{outline.aiOptimizationNotes}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h5 className="font-medium text-sm mb-2">Key Points:</h5>
-                        <ul className="text-sm space-y-1">
-                          {outline.keyPoints.map((point, pointIndex) => (
-                            <li key={pointIndex} className="flex items-center gap-2">
-                              <div className="w-1 h-1 bg-current rounded-full" />
-                              {point}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                    <div className="mt-3 space-y-2">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <Globe className="h-4 w-4 text-green-600" />
-                        <span className="text-sm text-green-600">AI Overview Optimized</span>
-                        <Badge variant="outline" className="text-xs">
-                          {outline.sources.length} Sources
-                        </Badge>
-                        <Badge variant="outline" className="text-xs bg-blue-100 text-blue-800">
-                          {outline.featuredSnippetSections.length} Snippet Sections
-                        </Badge>
-                        <Badge variant="outline" className="text-xs bg-purple-100 text-purple-800">
-                          {outline.faqSections.length} FAQ Items
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground">{outline.aiOptimizationNotes}</p>
                     </div>
                   </div>
                 ))}

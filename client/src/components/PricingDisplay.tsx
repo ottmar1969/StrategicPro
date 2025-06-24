@@ -60,10 +60,13 @@ export default function PricingDisplay({ user, onBuyCredits }: PricingDisplayPro
   return (
     <Card className="mb-6">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-center justify-center">
           <CreditCard className="h-5 w-5" />
-          Pricing Options
+          Choose Your Pricing Plan
         </CardTitle>
+        <p className="text-center text-muted-foreground">
+          Select the best option for your content generation needs
+        </p>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -81,40 +84,82 @@ export default function PricingDisplay({ user, onBuyCredits }: PricingDisplayPro
           </div>
 
           {/* All Pricing Options - 3 Column Layout */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             {/* API Key Option */}
-            <div className={`p-3 border rounded-lg ${user.hasOwnApiKey ? 'border-blue-500 bg-blue-50' : ''}`}>
-              <div className="flex items-center gap-2 mb-2">
-                <Key className="h-4 w-4" />
-                <span className="font-medium">With API Key</span>
-                {user.hasOwnApiKey && <Badge variant="default" className="text-xs">Active</Badge>}
-              </div>
-              <p className="text-sm text-muted-foreground mb-2">4 free articles + $1/article</p>
-              <div className="text-lg font-bold text-blue-600">$1.00</div>
-            </div>
-
-            {/* Credit Package - Middle Position */}
-            <div className={`p-3 border rounded-lg relative ${user.credits > 0 ? 'border-purple-500 bg-purple-50' : ''}`}>
-              <Badge className="absolute -top-2 left-2 text-xs bg-purple-600">Best Value</Badge>
-              <div className="flex items-center gap-2 mb-2">
-                <Coins className="h-4 w-4" />
-                <span className="font-medium">Credits Package</span>
-                {user.credits > 0 && <Badge variant="outline" className="text-xs">{user.credits} available</Badge>}
-              </div>
-              <p className="text-sm text-muted-foreground mb-2">Bulk: 3 credits • Premium: 5 credits</p>
-              <div className="text-lg font-bold text-purple-600">
-                $3.00 <span className="text-sm font-normal">/ $5.00</span>
+            <div className={`p-4 border-2 rounded-lg transition-all ${user.hasOwnApiKey ? 'border-blue-500 bg-blue-50 shadow-lg' : 'border-gray-200 hover:border-blue-300'}`}>
+              <div className="text-center">
+                <div className="flex items-center justify-center gap-2 mb-3">
+                  <Key className="h-5 w-5 text-blue-600" />
+                  <span className="font-semibold">With API Key</span>
+                  {user.hasOwnApiKey && <Badge variant="default" className="text-xs">Active</Badge>}
+                </div>
+                <div className="text-3xl font-bold text-blue-600 mb-2">$1.00</div>
+                <p className="text-sm text-muted-foreground mb-3">per article</p>
+                <div className="space-y-1 text-xs">
+                  <div className="flex items-center justify-center gap-1">
+                    <Check className="h-3 w-3 text-green-600" />
+                    <span>4 free articles</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-1">
+                    <Check className="h-3 w-3 text-green-600" />
+                    <span>Lowest rate</span>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Premium Direct Payment */}
-            <div className="p-3 border rounded-lg border-orange-200">
-              <div className="flex items-center gap-2 mb-2">
-                <CreditCard className="h-4 w-4" />
-                <span className="font-medium">Direct Payment</span>
+            {/* Credit Package - Middle Position - MOST PROMINENT */}
+            <div className={`p-4 border-2 rounded-lg relative transform hover:scale-105 transition-all shadow-lg ${user.credits > 0 ? 'border-purple-500 bg-purple-50' : 'border-purple-400 bg-purple-50'}`}>
+              <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 text-sm bg-purple-600 text-white px-3 py-1">Best Value</Badge>
+              <div className="text-center pt-2">
+                <div className="flex items-center justify-center gap-2 mb-3">
+                  <Coins className="h-5 w-5 text-purple-600" />
+                  <span className="font-semibold">Credits Package</span>
+                  {user.credits > 0 && <Badge variant="outline" className="text-xs">{user.credits} available</Badge>}
+                </div>
+                <div className="text-3xl font-bold text-purple-600 mb-2">3-5 Credits</div>
+                <p className="text-sm text-muted-foreground mb-3">($3-$5 value)</p>
+                <div className="space-y-1 text-xs">
+                  <div className="flex items-center justify-center gap-1">
+                    <Check className="h-3 w-3 text-green-600" />
+                    <span>Bulk: 3 credits</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-1">
+                    <Check className="h-3 w-3 text-green-600" />
+                    <span>Premium: 5 credits</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-1">
+                    <Check className="h-3 w-3 text-green-600" />
+                    <span>No per-article payment</span>
+                  </div>
+                </div>
               </div>
-              <p className="text-sm text-muted-foreground mb-2">Bulk: $3 • Premium: $10</p>
-              <div className="text-lg font-bold text-orange-600">$3.00 / $10.00</div>
+            </div>
+
+            {/* Direct Payment */}
+            <div className="p-4 border-2 rounded-lg border-orange-200 hover:border-orange-300 transition-all">
+              <div className="text-center">
+                <div className="flex items-center justify-center gap-2 mb-3">
+                  <CreditCard className="h-5 w-5 text-orange-600" />
+                  <span className="font-semibold">Direct Payment</span>
+                </div>
+                <div className="text-3xl font-bold text-orange-600 mb-2">$3-$10</div>
+                <p className="text-sm text-muted-foreground mb-3">per article</p>
+                <div className="space-y-1 text-xs">
+                  <div className="flex items-center justify-center gap-1">
+                    <Check className="h-3 w-3 text-green-600" />
+                    <span>Bulk: $3</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-1">
+                    <Check className="h-3 w-3 text-green-600" />
+                    <span>Premium: $10</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-1">
+                    <Check className="h-3 w-3 text-green-600" />
+                    <span>No setup required</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 

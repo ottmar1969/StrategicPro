@@ -235,18 +235,22 @@ export default function ContentWriter() {
           </TabsContent>
 
           <TabsContent value="generator" className="mt-6">
+            {/* Pricing Display - Full Width at Top */}
+            <div className="mb-8">
+              <PricingDisplay 
+                user={user} 
+                onBuyCredits={() => {
+                  toast({
+                    title: "Credit Purchase",
+                    description: "Credit purchase feature coming soon!"
+                  });
+                }}
+              />
+            </div>
+            
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Content Generation Form */}
               <div className="lg:col-span-2">
-                <PricingDisplay 
-                  user={user} 
-                  onBuyCredits={() => {
-                    toast({
-                      title: "Credit Purchase",
-                      description: "Credit purchase feature coming soon!"
-                    });
-                  }}
-                />
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
